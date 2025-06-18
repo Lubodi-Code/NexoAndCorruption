@@ -39,6 +39,10 @@ public class Nexo {
     private int energia;
     private boolean activo;
     private boolean enEstadoCritico;
+
+    // Radio de protección
+    private int radioBase;
+    private int radioActual;
     
     // Sistema de partículas y efectos
     private BukkitTask taskParticulas;
@@ -69,6 +73,8 @@ public class Nexo {
         this.energia = configManager.getEnergiaMaxima();
         this.activo = true;
         this.enEstadoCritico = false;
+        this.radioBase = configManager.getRadioProteccion();
+        this.radioActual = this.radioBase;
         
         // Inicializar archivo de guardado
         inicializarArchivoGuardado();
@@ -133,6 +139,14 @@ public class Nexo {
         if (datosNexo.contains("activo")) {
             this.activo = datosNexo.getBoolean("activo", true);
         }
+
+        if (datosNexo.contains("radio")) {
+            this.radioActual = datosNexo.getInt("radio", configManager.getRadioProteccion());
+        } else {
+            this.radioActual = configManager.getRadioProteccion();
+        }
+
+        this.radioBase = configManager.getRadioProteccion();
         
         // Validar que los valores no excedan los máximos
         this.vida = Math.min(this.vida, configManager.getVidaMaxima());
@@ -152,6 +166,7 @@ public class Nexo {
             datosNexo.set("vida", vida);
             datosNexo.set("energia", energia);
             datosNexo.set("activo", activo);
+            datosNexo.set("radio", radioActual);
             datosNexo.set("ultima_actualizacion", System.currentTimeMillis());
             
             // Guardar ubicación
@@ -477,6 +492,11 @@ public class Nexo {
      */
     public void recargarConfiguracion(ConfigManager nuevoConfigManager) {
         this.configManager = nuevoConfigManager;
+
+        this.radioBase = configManager.getRadioProteccion();
+        if (radioActual < radioBase) {
+            radioActual = radioBase;
+        }
         
         // Reiniciar efectos visuales con nueva configuración
         if (taskParticulas != null && !taskParticulas.isCancelled()) {
@@ -548,6 +568,10 @@ public class Nexo {
     public void setEnergia(int energia) {
         this.energia = Math.max(0, Math.min(energia, configManager.getEnergiaMaxima()));
     }
+
+    public void alimentar(int cantidad) {
+        setEnergia(this.energia + cantidad);
+    }
     
     public boolean estaActivo() {
         return activo;
@@ -563,5 +587,21 @@ public class Nexo {
     
     public ConfigManager getConfigManager() {
         return configManager;
+    }
+
+    // ==========================================
+    // MÉTODOS DE RADIO DE PROTECCIÓN
+    // ==========================================
+
+    public int getRadioActual() {
+        return radioActual;
+    }
+
+    public void expandirRadio(int cantidad) {
+        this.radioActual = Math.max(radioBase, radioActual + cantidad);
+    }
+
+    public void resetRadio() {
+        this.radioActual = radioBase;
     }
 }

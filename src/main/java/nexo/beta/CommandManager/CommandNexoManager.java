@@ -30,7 +30,7 @@ public class CommandNexoManager implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (args.length == 0) {
-            sender.sendMessage("§eUso: /" + label + " <crear|destruir|estado|activar|desactivar|reiniciar|recargar>");
+            sender.sendMessage("§eUso: /" + label + " <crear|destruir|estado|activar|desactivar|reiniciar|recargar|expandir>");
             return true;
         }
 
@@ -107,6 +107,26 @@ public class CommandNexoManager implements CommandExecutor {
                 nexoRei.reiniciar();
                 sender.sendMessage("§aNexo reiniciado.");
                 break;
+            case "expandir":
+                if (args.length < 2) {
+                    sender.sendMessage("§cUso: /" + label + " expandir <cantidad>");
+                    return true;
+                }
+                int cant;
+                try {
+                    cant = Integer.parseInt(args[1]);
+                } catch (NumberFormatException ex) {
+                    sender.sendMessage("§cCantidad inválida.");
+                    return true;
+                }
+                Nexo nexoExp = nexoManager.getNexoEnMundo(sender instanceof Player p ? p.getWorld() : plugin.getServer().getWorlds().get(0));
+                if (nexoExp == null) {
+                    sender.sendMessage(config.getMensajeNexoNoEncontrado());
+                    return true;
+                }
+                nexoExp.expandirRadio(cant);
+                sender.sendMessage("§aNuevo radio: " + nexoExp.getRadioActual());
+                break;
             case "recargar":
                 if (!config.isComandoRecargarHabilitado()) {
                     sender.sendMessage("§cComando deshabilitado.");
@@ -116,7 +136,7 @@ public class CommandNexoManager implements CommandExecutor {
                 sender.sendMessage("§aPlugin recargado.");
                 break;
             default:
-                sender.sendMessage("§eUso: /" + label + " <crear|destruir|estado|activar|desactivar|reiniciar|recargar>");
+                sender.sendMessage("§eUso: /" + label + " <crear|destruir|estado|activar|desactivar|reiniciar|recargar|expandir>");
                 break;
         }
         return true;
