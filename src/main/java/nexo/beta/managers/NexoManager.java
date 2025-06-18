@@ -246,15 +246,6 @@ public class NexoManager {
                     }
                 }
                 
-                // Regenerar energía
-                int energiaActual = nexo.getEnergia();
-                int energiaMaxima = configManager.getEnergiaMaxima();
-                int regeneracionEnergia = configManager.getEnergiaPorSegundo();
-                
-                if (energiaActual < energiaMaxima) {
-                    nexo.setEnergia(Math.min(energiaMaxima, energiaActual + regeneracionEnergia));
-                }
-                
                 // Regenerar vida
                 int vidaActual = nexo.getVida();
                 int vidaMaxima = configManager.getVidaMaxima();
@@ -271,12 +262,15 @@ public class NexoManager {
      * Consume energía de todos los Nexos activos
      */
     private void consumirEnergiaTodosLosNexos() {
-        int consumoPorMinuto = configManager.getConsumoEnergiaPorMinuto();
+        int consumoBase = configManager.getConsumoEnergiaPorMinuto();
         
         for (Nexo nexo : nexosPorMundo.values()) {
             if (nexo.estaActivo()) {
+                double factor = (double) nexo.getRadioActual() / configManager.getRadioProteccion();
+                int consumo = (int) Math.ceil(consumoBase * factor);
+
                 int energiaActual = nexo.getEnergia();
-                int nuevaEnergia = Math.max(0, energiaActual - consumoPorMinuto);
+                int nuevaEnergia = Math.max(0, energiaActual - consumo);
                 nexo.setEnergia(nuevaEnergia);
                 
                 // Si se queda sin energía, desactivar el Nexo
@@ -287,7 +281,7 @@ public class NexoManager {
                 }
                 
                 if (configManager.isDebugHabilitado() && configManager.isMostrarCalculosEnergia()) {
-                    logger.info("§e[DEBUG] Nexo consumió " + consumoPorMinuto + " energía. " +
+                    logger.info("§e[DEBUG] Nexo consumió " + consumo + " energía. " +
                                "Energía actual: " + nuevaEnergia + "/" + configManager.getEnergiaMaxima());
                 }
             }
