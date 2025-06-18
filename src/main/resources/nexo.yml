@@ -72,6 +72,18 @@ nexo:
         amplificador: 0
         area_radio: 75
 
+  # Configuración de invasiones aleatorias
+  invasion:
+    probabilidad: 1.0          # Probabilidad de que ocurra la invasión
+    advertencia: 30            # Segundos de aviso antes de iniciar
+    duracion: 30               # Duración de la invasión en segundos
+    radio_spawn: 100           # Radio máximo para spawnear criaturas
+    mobs:
+      ZOMBIE: 0.4
+      SKELETON: 0.3
+      CREEPER: 0.2
+      WARDEN: 0.1
+
   # Sistema de protecciones
   protecciones:
     # Protección contra explosiones
