@@ -103,11 +103,13 @@ nexo:
       habilitado: true
       permitir_construccion: false
       permitir_destruccion: false
+      radio_restriccion: 30
       mensaje: "🏗️ El Nexo protege los bloques de esta área."
-      
+
     # Protección de cofres y contenedores
     contenedores:
       habilitado: true
+      radio_restriccion: 30
       mensaje: "📦 Los contenedores están protegidos por el Nexo."
 
   # Configuración de regeneración

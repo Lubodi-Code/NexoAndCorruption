@@ -50,6 +50,7 @@ public class Nexo {
     // Sistema de partículas y efectos
     private BukkitTask taskParticulas;
     private BukkitTask taskEfectos;
+    private BukkitTask taskEliminarMobs;
 
     // Representación física del Nexo
     private Warden warden;
@@ -94,6 +95,8 @@ public class Nexo {
 
         // Crear barrera inicial
         actualizarBarrera();
+
+        iniciarEliminacionMobs();
         
         if (configManager.isDebugHabilitado()) {
             logger.info("§e[DEBUG] Nexo creado en: " + 
@@ -416,6 +419,8 @@ public class Nexo {
         // Guardar estado
         guardar();
 
+        detenerEliminacionMobs();
+
         actualizarBarrera();
 
         logger.info("§c❌ Nexo desactivado en " + ubicacion.getWorld().getName());
@@ -443,6 +448,8 @@ public class Nexo {
         
         // Guardar estado
         guardar();
+
+        iniciarEliminacionMobs();
 
         actualizarBarrera();
 
@@ -502,6 +509,8 @@ public class Nexo {
         // Eliminar representación física
         destroyRepresentation();
 
+        detenerEliminacionMobs();
+
         eliminarBarrera();
 
         logger.info("§c❌ Nexo destruido en " + ubicacion.getWorld().getName());
@@ -527,7 +536,12 @@ public class Nexo {
             taskEfectos.cancel();
         }
 
+        detenerEliminacionMobs();
+
         iniciarEfectosVisuales();
+        if (activo) {
+            iniciarEliminacionMobs();
+        }
         actualizarBarrera();
         
         logger.info("§a✅ Configuración del Nexo recargada");
@@ -640,5 +654,34 @@ public class Nexo {
 
     private void eliminarBarrera() {
         BarrierUtils.removeBarrier(barrierId + "_barrier");
+    }
+
+    // ==========================================
+    // ELIMINACIÓN DE MOBS HOSTILES SIN NOMBRE
+    // ==========================================
+
+    private void iniciarEliminacionMobs() {
+        if (taskEliminarMobs != null && !taskEliminarMobs.isCancelled()) return;
+
+        taskEliminarMobs = new BukkitRunnable() {
+            @Override
+            public void run() {
+                if (!activo || ubicacion.getWorld() == null) return;
+                for (org.bukkit.entity.Entity e : ubicacion.getWorld().getNearbyEntities(ubicacion, radioActual, radioActual, radioActual)) {
+                    if (e instanceof org.bukkit.entity.Monster m) {
+                        String name = m.getCustomName();
+                        if (name == null || name.isBlank()) {
+                            m.remove();
+                        }
+                    }
+                }
+            }
+        }.runTaskTimer(Bukkit.getPluginManager().getPlugin("NexoAndCorruption"), 20L, 20L);
+    }
+
+    private void detenerEliminacionMobs() {
+        if (taskEliminarMobs != null && !taskEliminarMobs.isCancelled()) {
+            taskEliminarMobs.cancel();
+        }
     }
 }
