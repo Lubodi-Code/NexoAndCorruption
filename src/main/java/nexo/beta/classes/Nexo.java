@@ -27,12 +27,14 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
 import nexo.beta.managers.ConfigManager;
+import nexo.beta.utils.BarrierUtils;
 
 public class Nexo {
     
     private final Location ubicacion;
     private ConfigManager configManager;
     private final Logger logger;
+    private final String barrierId;
     
     // Estados del Nexo
     private int vida;
@@ -67,6 +69,7 @@ public class Nexo {
         this.ubicacion = ubicacion.clone();
         this.configManager = configManager;
         this.logger = Bukkit.getLogger();
+        this.barrierId = "nexo_" + this.ubicacion.getWorld().getUID();
         
         // Inicializar estados
         this.vida = configManager.getVidaMaxima();
@@ -87,6 +90,9 @@ public class Nexo {
 
         // Iniciar efectos visuales
         iniciarEfectosVisuales();
+
+        // Crear barrera inicial
+        actualizarBarrera();
         
         if (configManager.isDebugHabilitado()) {
             logger.info("§e[DEBUG] Nexo creado en: " + 
@@ -306,8 +312,13 @@ public class Nexo {
             }
         }
         
-        // Actualizar estado crítico
-        enEstadoCritico = estaVidaBaja() || estaEnergiaBaja();
+        boolean nuevoEstado = estaVidaBaja() || estaEnergiaBaja();
+        if (nuevoEstado != enEstadoCritico) {
+            enEstadoCritico = nuevoEstado;
+            actualizarBarrera();
+        } else {
+            enEstadoCritico = nuevoEstado;
+        }
     }
     
     /**
@@ -403,7 +414,9 @@ public class Nexo {
         
         // Guardar estado
         guardar();
-        
+
+        actualizarBarrera();
+
         logger.info("§c❌ Nexo desactivado en " + ubicacion.getWorld().getName());
     }
     
@@ -429,7 +442,9 @@ public class Nexo {
         
         // Guardar estado
         guardar();
-        
+
+        actualizarBarrera();
+
         logger.info("§a✅ Nexo activado en " + ubicacion.getWorld().getName());
     }
     
@@ -461,7 +476,9 @@ public class Nexo {
         
         // Guardar estado
         guardar();
-        
+
+        actualizarBarrera();
+
         logger.info("§a🔄 Nexo reiniciado en " + ubicacion.getWorld().getName());
     }
     
@@ -483,6 +500,8 @@ public class Nexo {
 
         // Eliminar representación física
         destroyRepresentation();
+
+        eliminarBarrera();
 
         logger.info("§c❌ Nexo destruido en " + ubicacion.getWorld().getName());
     }
@@ -506,8 +525,9 @@ public class Nexo {
         if (taskEfectos != null && !taskEfectos.isCancelled()) {
             taskEfectos.cancel();
         }
-        
+
         iniciarEfectosVisuales();
+        actualizarBarrera();
         
         logger.info("§a✅ Configuración del Nexo recargada");
     }
@@ -599,9 +619,25 @@ public class Nexo {
 
     public void expandirRadio(int cantidad) {
         this.radioActual = Math.max(radioBase, radioActual + cantidad);
+        actualizarBarrera();
     }
 
     public void resetRadio() {
         this.radioActual = radioBase;
+        actualizarBarrera();
+    }
+
+    // ==========================================
+    // MÉTODOS DE BARRERA
+    // ==========================================
+
+    private void actualizarBarrera() {
+        if (ubicacion.getWorld() != null) {
+            BarrierUtils.createNexoBarrier(barrierId, ubicacion, radioActual, activo, enEstadoCritico);
+        }
+    }
+
+    private void eliminarBarrera() {
+        BarrierUtils.removeBarrier(barrierId + "_barrier");
     }
 }
