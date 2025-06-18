@@ -6,6 +6,7 @@ import nexo.beta.listeners.PlayerListener;
 import nexo.beta.managers.ConfigManager;
 import nexo.beta.managers.NexoManager;
 import nexo.beta.managers.PluginManager;
+import nexo.beta.CommandManager.CommandNexoManager;
 
 public class NexoAndCorruption extends JavaPlugin {
     
@@ -74,8 +75,7 @@ public class NexoAndCorruption extends JavaPlugin {
      * Registra los comandos del plugin
      */
     private void registerCommands() {
-        // Aquí registrarás tus comandos cuando los crees
-        // getCommand("nexo").setExecutor(new NexoCommand(this));
+        getCommand("nexo").setExecutor(new CommandNexoManager(this));
         getLogger().info("§a✅ Comandos registrados");
     }
     
