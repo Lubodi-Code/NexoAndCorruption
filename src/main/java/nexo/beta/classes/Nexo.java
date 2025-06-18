@@ -12,9 +12,17 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
+import org.bukkit.NamespacedKey;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Warden;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -35,6 +43,10 @@ public class Nexo {
     // Sistema de partículas y efectos
     private BukkitTask taskParticulas;
     private BukkitTask taskEfectos;
+
+    // Representación física del Nexo
+    private Warden warden;
+    private ArmorStand texturaStand;
     
     // Control de mensajes críticos
     private long ultimoMensajeVidaBaja = 0;
@@ -63,7 +75,10 @@ public class Nexo {
         
         // Cargar datos existentes
         cargarDatos();
-        
+
+        // Crear entidad representativa
+        spawnRepresentation();
+
         // Iniciar efectos visuales
         iniciarEfectosVisuales();
         
@@ -153,6 +168,45 @@ public class Nexo {
             
         } catch (IOException e) {
             logger.severe("§c❌ Error al guardar datos del Nexo: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Crea la representación física del Nexo como un Warden con un ArmorStand
+     */
+    private void spawnRepresentation() {
+        if (ubicacion.getWorld() == null) return;
+
+        warden = (Warden) ubicacion.getWorld().spawnEntity(ubicacion, EntityType.WARDEN);
+        warden.setAI(false);
+        warden.setSilent(true);
+        warden.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(configManager.getVidaMaxima());
+        warden.setHealth(Math.min(vida, configManager.getVidaMaxima()));
+
+        texturaStand = (ArmorStand) ubicacion.getWorld().spawnEntity(ubicacion, EntityType.ARMOR_STAND);
+        texturaStand.setInvisible(true);
+        texturaStand.setMarker(true);
+        texturaStand.setGravity(false);
+        ItemStack flint = new ItemStack(Material.FLINT);
+        ItemMeta meta = flint.getItemMeta();
+        if (meta != null) {
+            NamespacedKey key = new NamespacedKey(Bukkit.getPluginManager().getPlugin("NexoAndCorruption"), "texturaNexo");
+            meta.getPersistentDataContainer().set(key, PersistentDataType.INTEGER, 1);
+            flint.setItemMeta(meta);
+        }
+        texturaStand.getEquipment().setHelmet(flint);
+        warden.addPassenger(texturaStand);
+    }
+
+    /**
+     * Elimina la representación física del Nexo
+     */
+    private void destroyRepresentation() {
+        if (texturaStand != null && !texturaStand.isDead()) {
+            texturaStand.remove();
+        }
+        if (warden != null && !warden.isDead()) {
+            warden.remove();
         }
     }
     
@@ -372,6 +426,11 @@ public class Nexo {
         this.energia = configManager.getEnergiaMaxima();
         this.activo = true;
         this.enEstadoCritico = false;
+
+        if (warden != null && !warden.isDead()) {
+            warden.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(configManager.getVidaMaxima());
+            warden.setHealth(configManager.getVidaMaxima());
+        }
         
         // Enviar mensaje de reinicio
         Bukkit.broadcastMessage(configManager.getPrefijo() + "§a🔄 El Nexo ha sido reiniciado completamente.");
@@ -406,7 +465,10 @@ public class Nexo {
         
         // Guardar antes de destruir
         guardar();
-        
+
+        // Eliminar representación física
+        destroyRepresentation();
+
         logger.info("§c❌ Nexo destruido en " + ubicacion.getWorld().getName());
     }
     
@@ -466,10 +528,16 @@ public class Nexo {
     
     public void setVida(int vida) {
         this.vida = Math.max(0, Math.min(vida, configManager.getVidaMaxima()));
-        
+
+        if (warden != null && !warden.isDead()) {
+            double max = warden.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue();
+            warden.setHealth(Math.max(0.0, Math.min(this.vida, max)));
+        }
+
         // Si la vida llega a 0, desactivar el Nexo
         if (this.vida <= 0 && activo) {
             desactivar();
+            destroyRepresentation();
         }
     }
     
@@ -487,6 +555,10 @@ public class Nexo {
     
     public boolean estaEnEstadoCritico() {
         return enEstadoCritico;
+    }
+
+    public Warden getWarden() {
+        return warden;
     }
     
     public ConfigManager getConfigManager() {
