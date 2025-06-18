@@ -36,6 +36,7 @@ public class Nexo {
     private ConfigManager configManager;
     private final Logger logger;
     private final String barrierId;
+    private static final String WARDEN_TAG = "nexo_warden";
     
     // Estados del Nexo
     private int vida;
@@ -205,6 +206,7 @@ public class Nexo {
         warden = (Warden) ubicacion.getWorld().spawnEntity(ubicacion, EntityType.WARDEN);
         warden.setAI(false);
         warden.setSilent(true);
+        warden.addScoreboardTag(WARDEN_TAG);
         warden.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(configManager.getVidaMaxima());
         warden.setHealth(Math.min(vida, configManager.getVidaMaxima()));
 
@@ -513,6 +515,8 @@ public class Nexo {
 
         eliminarBarrera();
 
+        eliminarArchivoGuardado();
+
         logger.info("§c❌ Nexo destruido en " + ubicacion.getWorld().getName());
     }
     
@@ -669,6 +673,9 @@ public class Nexo {
                 if (!activo || ubicacion.getWorld() == null) return;
                 for (org.bukkit.entity.Entity e : ubicacion.getWorld().getNearbyEntities(ubicacion, radioActual, radioActual, radioActual)) {
                     if (e instanceof org.bukkit.entity.Monster m) {
+                        if (m.getScoreboardTags().contains(WARDEN_TAG)) {
+                            continue;
+                        }
                         String name = m.getCustomName();
                         if (name == null || name.isBlank()) {
                             m.remove();
@@ -682,6 +689,14 @@ public class Nexo {
     private void detenerEliminacionMobs() {
         if (taskEliminarMobs != null && !taskEliminarMobs.isCancelled()) {
             taskEliminarMobs.cancel();
+        }
+    }
+
+    private void eliminarArchivoGuardado() {
+        if (archivoGuardado != null && archivoGuardado.exists()) {
+            if (!archivoGuardado.delete()) {
+                logger.warning("§c⚠️ No se pudo eliminar el archivo del Nexo: " + archivoGuardado.getName());
+            }
         }
     }
 }
