@@ -1,14 +1,14 @@
 package nexo.beta.utils;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
-
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class BarrierUtils {
 
@@ -67,12 +67,12 @@ public class BarrierUtils {
                     Location particleLocation = center.clone().add(x, 0.1, z);
 
                     if (particle == Particle.REDSTONE && color != null) {
-                        Particle.DustOptions dustOptions = new Particle.DustOptions(color, 1.0f);
+                        Particle.DustOptions dustOptions = new Particle.DustOptions(color, 4.0f);
                         center.getWorld().spawnParticle(particle, particleLocation,
-                                1, 0, 0, 0, 0, dustOptions);
+                                3, 0.2, 0.2, 0.2, 0.2, dustOptions);
                     } else {
                         center.getWorld().spawnParticle(particle, particleLocation,
-                                1, 0, 0, 0, 0);
+                                3, 0.2, 0.2, 0.2, 0.2);
                     }
                 }
             }
@@ -87,7 +87,7 @@ public class BarrierUtils {
      */
     public static void createBasicBarrier(String id, Location center, double radius,
                                           Particle particle, Color color) {
-        createAdvancedBarrier(id, center, radius, particle, color, 50, false, false, 4);
+        createAdvancedBarrier(id, center, radius, particle, color, 600, false, false, 4);
     }
 
     /**
@@ -213,15 +213,15 @@ public class BarrierUtils {
 
         if (!isActive) {
             color = Color.GRAY;
-            density = 30;
+            density = 600;
             createPulseBarrier(nexoId + "_barrier", center, radius, particle, color);
         } else if (isCritical) {
             color = Color.RED;
-            density = 80;
+            density = 500;
             createCustomBarrier(nexoId + "_barrier", center, radius, particle, color, density);
         } else {
             color = Color.BLUE;
-            density = 60;
+            density = 600;
             createBasicBarrier(nexoId + "_barrier", center, radius, particle, color);
         }
     }
