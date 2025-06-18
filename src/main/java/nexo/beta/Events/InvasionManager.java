@@ -2,6 +2,7 @@ package nexo.beta.Events;
 
 import java.util.Map;
 import java.util.Random;
+import java.util.HashMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -27,6 +28,7 @@ public class InvasionManager {
     private BukkitTask checkTask;
     private BukkitTask spawnTask;
     private boolean invasionActiva = false;
+    private final Map<Nexo, Boolean> estadoPrevio = new HashMap<>();
 
     public InvasionManager(NexoAndCorruption plugin, NexoManager nexoManager, ConfigManager config) {
         this.plugin = plugin;
@@ -52,6 +54,7 @@ public class InvasionManager {
             spawnTask.cancel();
         }
         invasionActiva = false;
+        estadoPrevio.clear();
     }
 
     public void reload(ConfigManager newConfig) {
@@ -96,6 +99,13 @@ public class InvasionManager {
     private void iniciarInvasion() {
         invasionActiva = true;
         Bukkit.broadcastMessage(Utils.colorize(config.getMensajeInicioEvento()));
+        estadoPrevio.clear();
+        for (Nexo nexo : nexoManager.getTodosLosNexos().values()) {
+            estadoPrevio.put(nexo, nexo.estaActivo());
+            if (nexo.estaActivo()) {
+                nexo.desactivar();
+            }
+        }
         spawnTask = new BukkitRunnable() {
             int tiempo = config.getInvasionDuracion();
             @Override
@@ -114,6 +124,12 @@ public class InvasionManager {
     private void finalizarInvasion() {
         invasionActiva = false;
         Bukkit.broadcastMessage(Utils.colorize(config.getMensajeFinEvento()));
+        for (Map.Entry<Nexo, Boolean> entry : estadoPrevio.entrySet()) {
+            if (entry.getValue()) {
+                entry.getKey().activar();
+            }
+        }
+        estadoPrevio.clear();
     }
 
     private void generarEntidades() {
