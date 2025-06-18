@@ -1,17 +1,17 @@
 package nexo.beta.managers;
 
-import nexo.beta.NexoAndCorruption;
-import nexo.beta.entities.Nexo;
-import org.bukkit.World;
-import org.bukkit.Location;
-import org.bukkit.Bukkit;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Logger;
+
+import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
+
+import nexo.beta.NexoAndCorruption;
+import nexo.beta.classes.Nexo;
 
 public class NexoManager {
     
