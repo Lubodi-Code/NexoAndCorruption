@@ -6,6 +6,7 @@ public class PluginManager {
     private static PluginManager instance;
     private ConfigManager configManager;
     private NexoManager nexoManager;
+    private nexo.beta.Events.InvasionManager invasionManager;
     private NexoAndCorruption plugin;
     
     public static PluginManager getInstance() {
@@ -27,6 +28,8 @@ public class PluginManager {
             
             // 2. Inicializar NexoManager
             initializeNexoManager();
+
+            initializeInvasionManager();
             
             plugin.getLogger().info("§a✅ Todos los managers inicializados correctamente");
             
@@ -53,6 +56,12 @@ public class PluginManager {
         nexoManager = NexoManager.getInstance();
         plugin.getLogger().info("§a✅ NexoManager inicializado");
     }
+
+    private void initializeInvasionManager() {
+        invasionManager = new nexo.beta.Events.InvasionManager(plugin, nexoManager, configManager);
+        invasionManager.start();
+        plugin.getLogger().info("§a✅ InvasionManager inicializado");
+    }
     
     /**
      * Detiene todos los managers
@@ -63,6 +72,10 @@ public class PluginManager {
         // Detener NexoManager
         if (nexoManager != null) {
             nexoManager.shutdown();
+        }
+
+        if (invasionManager != null) {
+            invasionManager.shutdown();
         }
         
         plugin.getLogger().info("§a✅ Todos los managers detenidos correctamente");
@@ -84,6 +97,10 @@ public class PluginManager {
             if (nexoManager != null) {
                 nexoManager.recargarConfiguracion();
             }
+
+            if (invasionManager != null) {
+                invasionManager.reload(configManager);
+            }
             
             plugin.getLogger().info("§a✅ Todos los managers recargados correctamente");
             
@@ -103,6 +120,10 @@ public class PluginManager {
     
     public NexoManager getNexoManager() {
         return nexoManager;
+    }
+
+    public nexo.beta.Events.InvasionManager getInvasionManager() {
+        return invasionManager;
     }
     
     public NexoAndCorruption getPlugin() {

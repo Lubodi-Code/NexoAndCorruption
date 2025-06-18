@@ -142,6 +142,36 @@ public class ConfigManager {
     public List<Map<?, ?>> getEfectosEventoEspecial() {
         return nexoConfig.getMapList("nexo.eventos_especiales.efectos");
     }
+
+    // ==========================================
+    // MÉTODOS PARA INVASIONES
+    // ==========================================
+
+    public double getInvasionProbabilidad() {
+        return nexoConfig.getDouble("nexo.invasion.probabilidad", 0.1);
+    }
+
+    public int getInvasionAdvertencia() {
+        return nexoConfig.getInt("nexo.invasion.advertencia", 30);
+    }
+
+    public int getInvasionDuracion() {
+        return nexoConfig.getInt("nexo.invasion.duracion", 30);
+    }
+
+    public int getInvasionRadioSpawn() {
+        return nexoConfig.getInt("nexo.invasion.radio_spawn", 100);
+    }
+
+    public Map<String, Double> getInvasionMobs() {
+        Map<String, Double> result = new java.util.HashMap<>();
+        if (nexoConfig.isConfigurationSection("nexo.invasion.mobs")) {
+            for (String key : nexoConfig.getConfigurationSection("nexo.invasion.mobs").getKeys(false)) {
+                result.put(key.toUpperCase(), nexoConfig.getDouble("nexo.invasion.mobs." + key));
+            }
+        }
+        return result;
+    }
     
     // ==========================================
     // MÉTODOS PARA PROTECCIONES

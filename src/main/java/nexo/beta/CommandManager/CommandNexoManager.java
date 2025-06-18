@@ -30,7 +30,7 @@ public class CommandNexoManager implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (args.length == 0) {
-            sender.sendMessage("§eUso: /" + label + " <crear|destruir|estado|activar|desactivar|reiniciar|recargar|expandir>");
+            sender.sendMessage("§eUso: /" + label + " <crear|destruir|estado|activar|desactivar|reiniciar|recargar|expandir|invasion>");
             return true;
         }
 
@@ -127,6 +127,10 @@ public class CommandNexoManager implements CommandExecutor {
                 nexoExp.expandirRadio(cant);
                 sender.sendMessage("§aNuevo radio: " + nexoExp.getRadioActual());
                 break;
+            case "invasion":
+                plugin.getPluginManager().getInvasionManager().forzarInvasion();
+                sender.sendMessage("§aInvasión forzada.");
+                break;
             case "recargar":
                 if (!config.isComandoRecargarHabilitado()) {
                     sender.sendMessage("§cComando deshabilitado.");
@@ -136,7 +140,7 @@ public class CommandNexoManager implements CommandExecutor {
                 sender.sendMessage("§aPlugin recargado.");
                 break;
             default:
-                sender.sendMessage("§eUso: /" + label + " <crear|destruir|estado|activar|desactivar|reiniciar|recargar|expandir>");
+                sender.sendMessage("§eUso: /" + label + " <crear|destruir|estado|activar|desactivar|reiniciar|recargar|expandir|invasion>");
                 break;
         }
         return true;
