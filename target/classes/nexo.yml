@@ -1,0 +1,203 @@
+# ==========================================
+# CONFIGURACIÓN DEL NEXO PROTECTOR
+# ==========================================
+
+nexo:
+  # Configuración básica del Nexo
+  vida_maxima: 1000
+  energia_maxima: 1000
+  energia_consumo_por_minuto: 10
+  
+  # Radio de protección (en bloques)
+  radio_proteccion: 50
+  
+  # Configuración de ubicación
+  ubicacion:
+    mundo: "world"
+    x: 0
+    y: 100
+    z: 0
+    
+  # Sistema de reinicio automático
+  reinicio:
+    habilitado: true
+    aleatorio: true
+    intervalo_min: 3600   # 1 hora en segundos
+    intervalo_max: 10800  # 3 horas en segundos
+    
+    # Advertencias antes del reinicio
+    advertencias:
+      - tiempo: 3600  # 1 hora antes
+        mensaje: "⏳ El Nexo podría reiniciarse en 1 hora. Prepárense para posibles ataques."
+        broadcast: true
+        sonido: "BLOCK_NOTE_BLOCK_PLING"
+        
+      - tiempo: 1800  # 30 minutos antes
+        mensaje: "⚠️ El Nexo muestra inestabilidad... 30 minutos restantes."
+        broadcast: true
+        sonido: "BLOCK_NOTE_BLOCK_BASS"
+        
+      - tiempo: 600   # 10 minutos antes
+        mensaje: "❗ Posible reinicio inminente del Nexo. ¡Últimos preparativos!"
+        broadcast: true
+        sonido: "ENTITY_ENDER_DRAGON_GROWL"
+        
+      - tiempo: 60    # 1 minuto antes
+        mensaje: "🚨 ¡REINICIO INMINENTE! El Nexo se apagará en 1 minuto."
+        broadcast: true
+        sonido: "BLOCK_END_PORTAL_SPAWN"
+
+  # Eventos especiales durante el reinicio
+  eventos_especiales:
+    habilitado: true
+    probabilidad: 0.25  # 25% de probabilidad
+    
+    # Mensajes de evento especial
+    mensaje_previo: "‼️ El Nexo siente una gran perturbación en la energía..."
+    mensaje_inicio: "🔥 ¡INVASIÓN ESPECIAL ACTIVADA! Las defensas del Nexo han fallado."
+    mensaje_fin: "✅ El Nexo ha recuperado su estabilidad. La invasión ha terminado."
+    
+    # Duración del evento especial (en segundos)
+    duracion: 1200  # 20 minutos
+    
+    # Efectos durante el evento
+    efectos:
+      - tipo: "WEAKNESS"
+        duracion: 600  # 10 minutos
+        amplificador: 1
+        area_radio: 100
+        
+      - tipo: "SLOWNESS"
+        duracion: 300  # 5 minutos
+        amplificador: 0
+        area_radio: 75
+
+  # Sistema de protecciones
+  protecciones:
+    # Protección contra explosiones
+    explosiones:
+      habilitado: true
+      bloquear: true
+      mensaje: "🛡️ El Nexo protege esta área de explosiones."
+      
+    # Protección contra PvP
+    pvp:
+      habilitado: true
+      bloquear: true
+      mensaje: "⚔️ El Nexo no permite combate en esta zona protegida."
+      
+    # Protección contra construcción/destrucción
+    bloques:
+      habilitado: true
+      permitir_construccion: false
+      permitir_destruccion: false
+      mensaje: "🏗️ El Nexo protege los bloques de esta área."
+      
+    # Protección de cofres y contenedores
+    contenedores:
+      habilitado: true
+      mensaje: "📦 Los contenedores están protegidos por el Nexo."
+
+  # Configuración de regeneración
+  regeneracion:
+    habilitado: true
+    energia_por_segundo: 2
+    vida_por_segundo: 1
+    
+    # Condiciones para regeneración
+    requiere_jugadores_cerca: false
+    radio_minimo_jugadores: 20
+    minimo_jugadores: 1
+
+  # Efectos visuales y sonoros
+  efectos:
+    particulas:
+      habilitado: true
+      tipo: "ENCHANTMENT_TABLE"
+      cantidad: 10
+      intervalo: 5  # segundos
+      
+    sonidos:
+      habilitado: true
+      energia_baja: "BLOCK_NOTE_BLOCK_BASS"
+      vida_baja: "ENTITY_VILLAGER_HURT"
+      reinicio: "BLOCK_END_PORTAL_SPAWN"
+      
+  # Configuración de estados críticos
+  estados_criticos:
+    # Cuando la vida está baja
+    vida_baja:
+      porcentaje: 25  # 25% de vida o menos
+      mensaje: "🆘 ¡ALERTA! El Nexo está gravemente dañado ({vida}/{vida_maxima})"
+      intervalo_mensaje: 30  # segundos entre mensajes
+      efectos:
+        - "BLINDNESS:1:10"  # Ceguera nivel 1 por 10 segundos a jugadores cercanos
+        
+    # Cuando la energía está baja
+    energia_baja:
+      porcentaje: 20  # 20% de energía o menos
+      mensaje: "⚡ El Nexo tiene poca energía ({energia}/{energia_maxima}). Las protecciones se debilitan."
+      intervalo_mensaje: 45
+      
+    # Cuando el Nexo está inactivo
+    nexo_inactivo:
+      mensaje: "💀 ¡EL NEXO HA CAÍDO! Las protecciones han desaparecido."
+      broadcast: true
+      efectos_negativos:
+        - tipo: "WITHER"
+          duracion: 200
+          amplificador: 1
+          radio: 100
+
+  # Configuración de comandos y permisos
+  comandos:
+    # Comando para ver estado del Nexo
+    estado:
+      habilitado: true
+      permiso: "nexo.estado"
+      
+    # Comando para recargar configuración
+    recargar:
+      habilitado: true
+      permiso: "nexo.admin.recargar"
+      
+    # Comando para forzar reinicio
+    reiniciar:
+      habilitado: true
+      permiso: "nexo.admin.reiniciar"
+
+  # Configuración de base de datos/guardado
+  guardado:
+    # Intervalo de guardado automático (en segundos)
+    intervalo_auto: 300  # 5 minutos
+    
+    # Guardar al apagar el servidor
+    guardar_al_apagar: true
+    
+    # Archivo de guardado
+    archivo: "nexo_data.yml"
+
+  # Mensajes personalizables
+  mensajes:
+    prefijo: "§8[§6Nexo§8] §r"
+    
+    # Mensajes de estado
+    nexo_activado: "§a✅ El Nexo ha sido activado y está protegiendo el área."
+    nexo_desactivado: "§c❌ El Nexo ha sido desactivado. ¡Cuidado!"
+    
+    # Mensajes de información
+    estado_vida: "§6Vida del Nexo: §e{vida}§6/§e{vida_maxima} §6({porcentaje}%)"
+    estado_energia: "§b⚡ Energía: §e{energia}§b/§e{energia_maxima} §b({porcentaje}%)"
+    
+    # Mensajes de error
+    nexo_no_encontrado: "§cError: No se pudo encontrar el Nexo."
+    sin_permisos: "§cNo tienes permisos para usar este comando."
+
+# ==========================================
+# CONFIGURACIÓN DE DEBUG
+# ==========================================
+debug:
+  habilitado: false
+  mostrar_coordenadas: true
+  mostrar_calculos_energia: false
+  mostrar_eventos: true
