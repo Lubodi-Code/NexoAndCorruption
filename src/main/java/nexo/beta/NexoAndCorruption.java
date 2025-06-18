@@ -3,6 +3,7 @@ package nexo.beta;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import nexo.beta.listeners.PlayerListener;
+import nexo.beta.listeners.ProtectionListener;
 import nexo.beta.managers.ConfigManager;
 import nexo.beta.managers.NexoManager;
 import nexo.beta.managers.PluginManager;
@@ -68,6 +69,7 @@ public class NexoAndCorruption extends JavaPlugin {
      */
     private void registerListeners() {
         getServer().getPluginManager().registerEvents(new PlayerListener(), this);
+        getServer().getPluginManager().registerEvents(new ProtectionListener(), this);
         getLogger().info("§a✅ Listeners registrados");
     }
     

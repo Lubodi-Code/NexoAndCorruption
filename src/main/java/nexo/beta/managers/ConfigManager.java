@@ -214,6 +214,10 @@ public class ConfigManager {
     public boolean isPermitirDestruccion() {
         return nexoConfig.getBoolean("nexo.protecciones.bloques.permitir_destruccion", false);
     }
+
+    public int getRadioRestriccionBloques() {
+        return nexoConfig.getInt("nexo.protecciones.bloques.radio_restriccion", 30);
+    }
     
     public String getMensajeProteccionBloques() {
         return nexoConfig.getString("nexo.protecciones.bloques.mensaje", 
@@ -222,6 +226,10 @@ public class ConfigManager {
     
     public boolean isProteccionContenedoresHabilitada() {
         return nexoConfig.getBoolean("nexo.protecciones.contenedores.habilitado", true);
+    }
+
+    public int getRadioRestriccionContenedores() {
+        return nexoConfig.getInt("nexo.protecciones.contenedores.radio_restriccion", getRadioRestriccionBloques());
     }
     
     public String getMensajeProteccionContenedores() {
