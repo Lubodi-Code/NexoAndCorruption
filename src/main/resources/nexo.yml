@@ -27,22 +27,27 @@ nexo:
     
     # Advertencias antes del reinicio
     advertencias:
-      - tiempo: 3600  # 1 hora antes
-        mensaje: "⏳ El Nexo podría reiniciarse en 1 hora. Prepárense para posibles ataques."
+      - tiempo: 300
+        mensaje: "⏳ El Nexo se reiniciará en 5 minutos."
         broadcast: true
         sonido: "BLOCK_NOTE_BLOCK_PLING"
-        
-      - tiempo: 1800  # 30 minutos antes
-        mensaje: "⚠️ El Nexo muestra inestabilidad... 30 minutos restantes."
+
+      - tiempo: 240
+        mensaje: "⚠️ Reinicio en 4 minutos."
         broadcast: true
         sonido: "BLOCK_NOTE_BLOCK_BASS"
-        
-      - tiempo: 600   # 10 minutos antes
-        mensaje: "❗ Posible reinicio inminente del Nexo. ¡Últimos preparativos!"
+
+      - tiempo: 180
+        mensaje: "❗ Reinicio en 3 minutos."
         broadcast: true
         sonido: "ENTITY_ENDER_DRAGON_GROWL"
-        
-      - tiempo: 60    # 1 minuto antes
+
+      - tiempo: 120
+        mensaje: "❗ Reinicio en 2 minutos."
+        broadcast: true
+        sonido: "ENTITY_ENDER_DRAGON_GROWL"
+
+      - tiempo: 60
         mensaje: "🚨 ¡REINICIO INMINENTE! El Nexo se apagará en 1 minuto."
         broadcast: true
         sonido: "BLOCK_END_PORTAL_SPAWN"
@@ -188,6 +193,10 @@ nexo:
     # Mensajes de información
     estado_vida: "§6Vida del Nexo: §e{vida}§6/§e{vida_maxima} §6({porcentaje}%)"
     estado_energia: "§b⚡ Energía: §e{energia}§b/§e{energia_maxima} §b({porcentaje}%)"
+
+    invasion_duracion: "⚔️ ¡Invasión en curso! Durará {minutos} minutos."
+    invasion_fin: "✅ La invasión ha terminado."
+    invasion_cancelada: "⛔ La invasión se ha detenido."
     
     # Mensajes de error
     nexo_no_encontrado: "§cError: No se pudo encontrar el Nexo."

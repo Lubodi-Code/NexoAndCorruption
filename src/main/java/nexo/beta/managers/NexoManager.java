@@ -1,17 +1,24 @@
 package nexo.beta.managers;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Logger;
+import java.util.ArrayList;
+import java.util.Random;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.Sound;
+import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
 import nexo.beta.NexoAndCorruption;
 import nexo.beta.classes.Nexo;
+import nexo.beta.managers.InvasionManager;
 
 public class NexoManager {
     
@@ -27,12 +34,18 @@ public class NexoManager {
     private BukkitTask taskRegeneracion;
     private BukkitTask taskConsumoEnergia;
     private BukkitTask taskGuardadoAutomatico;
+
+    // Gestión de invasiones y reinicios
+    private final InvasionManager invasionManager;
+    private BukkitTask taskReinicio;
+    private final List<BukkitTask> advertencias = new ArrayList<>();
     
     private NexoManager(NexoAndCorruption plugin, ConfigManager configManager) {
         this.plugin = plugin;
         this.configManager = configManager;
         this.logger = plugin.getLogger();
         this.nexosPorMundo = new HashMap<>();
+        this.invasionManager = new InvasionManager(plugin, configManager);
     }
     
     /**
@@ -125,7 +138,10 @@ public class NexoManager {
                 }
             }.runTaskTimer(plugin, intervalo, intervalo);
         }
-        
+
+        // Programar reinicios automáticos
+        scheduleReinicio();
+
         logger.info("§a✅ Tareas automáticas del Nexo iniciadas");
     }
     
@@ -145,6 +161,16 @@ public class NexoManager {
         if (taskGuardadoAutomatico != null && !taskGuardadoAutomatico.isCancelled()) {
             taskGuardadoAutomatico.cancel();
         }
+        if (taskReinicio != null && !taskReinicio.isCancelled()) {
+            taskReinicio.cancel();
+        }
+        for (BukkitTask t : advertencias) {
+            if (!t.isCancelled()) {
+                t.cancel();
+            }
+        }
+        advertencias.clear();
+        invasionManager.stopInvasion();
         
         // Guardar todos los Nexos antes de cerrar
         if (configManager.isGuardarAlApagar()) {
@@ -222,6 +248,16 @@ public class NexoManager {
         Nexo nexo = nexosPorMundo.remove(mundo.getUID());
         if (nexo != null) {
             nexo.destruir();
+            invasionManager.stopInvasion();
+            if (taskReinicio != null && !taskReinicio.isCancelled()) {
+                taskReinicio.cancel();
+            }
+            for (BukkitTask t : advertencias) {
+                if (!t.isCancelled()) {
+                    t.cancel();
+                }
+            }
+            advertencias.clear();
             logger.info("§c❌ Nexo eliminado del mundo: " + mundo.getName());
             return true;
         }
@@ -293,6 +329,72 @@ public class NexoManager {
             }
         }
     }
+
+    /**
+     * Programa el reinicio automático del Nexo y sus advertencias.
+     */
+    private void scheduleReinicio() {
+        if (!configManager.isReinicioHabilitado()) {
+            return;
+        }
+
+        // Cancelar tareas anteriores
+        if (taskReinicio != null && !taskReinicio.isCancelled()) {
+            taskReinicio.cancel();
+        }
+        for (BukkitTask t : advertencias) {
+            if (!t.isCancelled()) {
+                t.cancel();
+            }
+        }
+        advertencias.clear();
+
+        int intervalo = configManager.getIntervaloReinicioMin();
+        if (configManager.isReinicioAleatorio()) {
+            int max = configManager.getIntervaloReinicioMax();
+            int min = configManager.getIntervaloReinicioMin();
+            intervalo = min + new Random().nextInt((max - min) + 1);
+        }
+
+        // Programar advertencias
+        for (Map<?, ?> adv : configManager.getAdvertenciasReinicio()) {
+            Object tiempoObj = adv.get("tiempo");
+            if (!(tiempoObj instanceof Number)) continue;
+            int tiempo = ((Number) tiempoObj).intValue();
+            String mensaje = String.valueOf(adv.getOrDefault("mensaje", "Reinicio inminente"));
+            boolean broadcast = Boolean.parseBoolean(String.valueOf(adv.getOrDefault("broadcast", "true")));
+            String sonidoStr = String.valueOf(adv.getOrDefault("sonido", ""));
+            Sound sonido = null;
+            try { sonido = Sound.valueOf(sonidoStr); } catch (IllegalArgumentException ignore) {}
+
+            long delay = Math.max(0, intervalo - tiempo) * 20L;
+            BukkitTask task = new BukkitRunnable() {
+                @Override
+                public void run() {
+                    if (broadcast) {
+                        Bukkit.broadcastMessage(configManager.getPrefijo() + mensaje);
+                    }
+                    if (sonido != null && configManager.isSonidosHabilitados()) {
+                        for (Player p : Bukkit.getOnlinePlayers()) {
+                            p.playSound(p.getLocation(), sonido, 1.0f, 1.0f);
+                        }
+                    }
+                }
+            }.runTaskLater(plugin, delay);
+            advertencias.add(task);
+        }
+
+        // Programar el reinicio final
+        taskReinicio = new BukkitRunnable() {
+            @Override
+            public void run() {
+                for (Nexo nexo : nexosPorMundo.values()) {
+                    nexo.reiniciar();
+                }
+                scheduleReinicio();
+            }
+        }.runTaskLater(plugin, intervalo * 20L);
+    }
     
     // ==========================================
     // MÉTODOS DE GUARDADO Y CARGA
@@ -335,7 +437,8 @@ public class NexoManager {
         
         // Reiniciar tareas automáticas
         startAutomaticTasks();
-        
+        scheduleReinicio();
+
         logger.info("§a✅ Configuración del NexoManager recargada");
     }
     
@@ -376,5 +479,9 @@ public class NexoManager {
     
     public NexoAndCorruption getPlugin() {
         return plugin;
+    }
+
+    public InvasionManager getInvasionManager() {
+        return invasionManager;
     }
 }
