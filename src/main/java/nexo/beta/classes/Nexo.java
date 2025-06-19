@@ -43,6 +43,9 @@ public class Nexo {
     private int energia;
     private boolean activo;
     private boolean enEstadoCritico;
+    private boolean reiniciando = false;
+    private BukkitTask taskReinicio;
+    private int tiempoReinicioRestante;
 
     // Radio de protección
     private int radioBase;
@@ -459,37 +462,62 @@ public class Nexo {
     }
     
     /**
-     * Reinicia el Nexo con valores máximos
+     * Inicia un proceso de reinicio del Nexo. Durante el reinicio el Nexo se
+     * mantiene desactivado y al finalizar recupera todos sus valores.
      */
     public void reiniciar() {
+        if (reiniciando) return;
+
+        reiniciando = true;
+        int duracion = calcularTiempoReinicio();
+        tiempoReinicioRestante = duracion;
+
+        desactivar();
+
+        Bukkit.broadcastMessage(configManager.getPrefijo() + "§cEl Nexo está reiniciándose...");
+
+        taskReinicio = new BukkitRunnable() {
+            @Override
+            public void run() {
+                if (energia <= 0) {
+                    if (energia >= configManager.getEnergiaMaxima() / 2) {
+                        finalizarReinicio();
+                        cancel();
+                    }
+                    return;
+                }
+                if (tiempoReinicioRestante <= 0) {
+                    finalizarReinicio();
+                    cancel();
+                    return;
+                }
+                tiempoReinicioRestante--;
+            }
+        }.runTaskTimer(Bukkit.getPluginManager().getPlugin("NexoAndCorruption"), 20L, 20L);
+    }
+
+    private void finalizarReinicio() {
+        reiniciando = false;
+        if (taskReinicio != null && !taskReinicio.isCancelled()) {
+            taskReinicio.cancel();
+        }
+
         this.vida = configManager.getVidaMaxima();
         this.energia = configManager.getEnergiaMaxima();
-        this.activo = true;
         this.enEstadoCritico = false;
 
-        if (warden != null && !warden.isDead()) {
-            warden.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(configManager.getVidaMaxima());
-            warden.setHealth(configManager.getVidaMaxima());
-        }
-        
-        // Enviar mensaje de reinicio
-        Bukkit.broadcastMessage(configManager.getPrefijo() + "§a🔄 El Nexo ha sido reiniciado completamente.");
-        
-        // Reproducir sonido de reinicio
-        if (configManager.isSonidosHabilitados()) {
-            for (Player player : Bukkit.getOnlinePlayers()) {
-                if (player.getWorld().equals(ubicacion.getWorld())) {
-                    player.playSound(player.getLocation(), configManager.getSonidoReinicio(), 1.0f, 1.0f);
-                }
-            }
-        }
-        
-        // Guardar estado
+        activar();
         guardar();
 
-        actualizarBarrera();
-
         logger.info("§a🔄 Nexo reiniciado en " + ubicacion.getWorld().getName());
+    }
+
+    private int calcularTiempoReinicio() {
+        int maxEnergia = configManager.getEnergiaMaxima();
+        double porcentaje = (double) energia / maxEnergia;
+        int min = 600; // 10 minutos
+        int max = 1200; // 20 minutos
+        return (int) Math.round(max - (max - min) * porcentaje);
     }
     
     /**
@@ -618,6 +646,14 @@ public class Nexo {
     
     public boolean estaEnEstadoCritico() {
         return enEstadoCritico;
+    }
+
+    public boolean estaReiniciando() {
+        return reiniciando;
+    }
+
+    public int getTiempoReinicioRestante() {
+        return tiempoReinicioRestante;
     }
 
     public Warden getWarden() {

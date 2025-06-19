@@ -28,6 +28,7 @@ public class InvasionManager {
     private BukkitTask checkTask;
     private BukkitTask spawnTask;
     private boolean invasionActiva = false;
+    private boolean invasionInfinita = false;
     private final Map<Nexo, Boolean> estadoPrevio = new HashMap<>();
 
     public InvasionManager(NexoAndCorruption plugin, NexoManager nexoManager, ConfigManager config) {
@@ -37,11 +38,11 @@ public class InvasionManager {
     }
 
     public void start() {
-        long intervalo = 20L * 60; // cada minuto
+        long intervalo = 20L; // comprobar cada segundo
         checkTask = new BukkitRunnable() {
             @Override
             public void run() {
-                verificarInvasion();
+                verificarCondiciones();
             }
         }.runTaskTimer(plugin, intervalo, intervalo);
     }
@@ -69,11 +70,37 @@ public class InvasionManager {
         }
     }
 
-    private void verificarInvasion() {
-        if (invasionActiva) return;
-        double prob = config.getInvasionProbabilidad();
-        if (Math.random() <= prob) {
-            iniciarCuentaRegresiva();
+    private void verificarCondiciones() {
+        if (!invasionActiva) {
+            for (Nexo nexo : nexoManager.getTodosLosNexos().values()) {
+                if (nexo.estaReiniciando()) {
+                    iniciarInvasion(nexo.getTiempoReinicioRestante());
+                    return;
+                }
+                if (!nexo.estaActivo()) {
+                    iniciarInvasion(-1);
+                    return;
+                }
+                if (nexo.estaActivo()) {
+                    double prob = 0.9 * (1.0 - ((double) nexo.getEnergia() / config.getEnergiaMaxima()));
+                    if (Math.random() <= prob) {
+                        nexo.reiniciar();
+                        return;
+                    }
+                }
+            }
+        } else if (invasionInfinita) {
+            boolean finalizar = true;
+            for (Nexo nexo : nexoManager.getTodosLosNexos().values()) {
+                if (nexo.estaReiniciando() || !nexo.estaActivo() ||
+                    nexo.getEnergia() < config.getEnergiaMaxima() / 2) {
+                    finalizar = false;
+                    break;
+                }
+            }
+            if (finalizar) {
+                finalizarInvasion();
+            }
         }
     }
 
@@ -84,7 +111,7 @@ public class InvasionManager {
             @Override
             public void run() {
                 if (tiempo <= 0) {
-                    iniciarInvasion();
+                    iniciarInvasion(config.getInvasionDuracion());
                     cancel();
                     return;
                 }
@@ -96,8 +123,9 @@ public class InvasionManager {
         }.runTaskTimer(plugin, 0L, 20L);
     }
 
-    private void iniciarInvasion() {
+    private void iniciarInvasion(int duracion) {
         invasionActiva = true;
+        invasionInfinita = duracion < 0;
         Bukkit.broadcastMessage(Utils.colorize(config.getMensajeInicioEvento()));
         estadoPrevio.clear();
         for (Nexo nexo : nexoManager.getTodosLosNexos().values()) {
@@ -107,22 +135,25 @@ public class InvasionManager {
             }
         }
         spawnTask = new BukkitRunnable() {
-            int tiempo = config.getInvasionDuracion();
+            int tiempo = duracion;
             @Override
             public void run() {
-                if (tiempo <= 0) {
-                    finalizarInvasion();
-                    cancel();
-                    return;
+                if (!invasionInfinita) {
+                    if (tiempo <= 0) {
+                        finalizarInvasion();
+                        cancel();
+                        return;
+                    }
+                    tiempo--;
                 }
                 generarEntidades();
-                tiempo--;
             }
         }.runTaskTimer(plugin, 0L, 20L);
     }
 
     private void finalizarInvasion() {
         invasionActiva = false;
+        invasionInfinita = false;
         Bukkit.broadcastMessage(Utils.colorize(config.getMensajeFinEvento()));
         for (Map.Entry<Nexo, Boolean> entry : estadoPrevio.entrySet()) {
             if (entry.getValue()) {
