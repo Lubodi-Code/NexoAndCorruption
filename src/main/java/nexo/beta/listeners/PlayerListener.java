@@ -15,7 +15,7 @@ import nexo.beta.classes.Nexo;
 import nexo.beta.managers.NexoManager;
 
 public class PlayerListener implements Listener {
-    
+
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         // Handle player join event
