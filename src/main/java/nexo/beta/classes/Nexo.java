@@ -29,6 +29,7 @@ import org.bukkit.scheduler.BukkitTask;
 
 import nexo.beta.managers.ConfigManager;
 import nexo.beta.utils.BarrierUtils;
+import nexo.beta.utils.Utils;
 
 public class Nexo {
     
@@ -476,6 +477,14 @@ public class Nexo {
 
         Bukkit.broadcastMessage(configManager.getPrefijo() + "§cEl Nexo está reiniciándose...");
 
+        java.util.Map<Integer, java.util.Map<?, ?>> advertencias = new java.util.HashMap<>();
+        for (java.util.Map<?, ?> adv : configManager.getAdvertenciasReinicio()) {
+            Object t = adv.get("tiempo");
+            if (t instanceof Number) {
+                advertencias.put(((Number) t).intValue(), adv);
+            }
+        }
+
         taskReinicio = new BukkitRunnable() {
             @Override
             public void run() {
@@ -492,6 +501,34 @@ public class Nexo {
                     return;
                 }
                 tiempoReinicioRestante--;
+
+                java.util.Map<?, ?> adv = advertencias.get(tiempoReinicioRestante);
+                if (adv != null) {
+                    String mensaje = (String) adv.get("mensaje");
+                    boolean bc = true;
+                    Object bcObj = adv.get("broadcast");
+                    if (bcObj instanceof Boolean b) bc = b;
+                    if (mensaje != null && !mensaje.isBlank()) {
+                        mensaje = nexo.beta.utils.Utils.colorize(mensaje);
+                        if (bc) {
+                            Bukkit.broadcastMessage(mensaje);
+                        } else {
+                            for (Player p : Bukkit.getOnlinePlayers()) {
+                                p.sendMessage(mensaje);
+                            }
+                        }
+                    }
+                    if (adv.containsKey("sonido") && configManager.isSonidosHabilitados()) {
+                        try {
+                            org.bukkit.Sound s = org.bukkit.Sound.valueOf(String.valueOf(adv.get("sonido")));
+                            for (Player p : Bukkit.getOnlinePlayers()) {
+                                if (p.getWorld().equals(ubicacion.getWorld())) {
+                                    p.playSound(p.getLocation(), s, 1.0f, 1.0f);
+                                }
+                            }
+                        } catch (IllegalArgumentException ignore) {}
+                    }
+                }
             }
         }.runTaskTimer(Bukkit.getPluginManager().getPlugin("NexoAndCorruption"), 20L, 20L);
     }
@@ -515,7 +552,8 @@ public class Nexo {
     private int calcularTiempoReinicio() {
         int maxEnergia = configManager.getEnergiaMaxima();
         double porcentaje = (double) energia / maxEnergia;
-        int min = 600; // 10 minutos
+        // Con energía al 100% el reinicio dura 5 minutos y va aumentando
+        int min = 300; // 5 minutos
         int max = 1200; // 20 minutos
         return (int) Math.round(max - (max - min) * porcentaje);
     }
@@ -532,6 +570,11 @@ public class Nexo {
         if (taskEfectos != null && !taskEfectos.isCancelled()) {
             taskEfectos.cancel();
         }
+
+        if (taskReinicio != null && !taskReinicio.isCancelled()) {
+            taskReinicio.cancel();
+        }
+        reiniciando = false;
         
         // Guardar antes de destruir
         guardar();

@@ -12,6 +12,7 @@ import org.bukkit.scheduler.BukkitTask;
 
 import nexo.beta.NexoAndCorruption;
 import nexo.beta.classes.Nexo;
+import nexo.beta.managers.PluginManager;
 
 public class NexoManager {
     
@@ -222,6 +223,7 @@ public class NexoManager {
         Nexo nexo = nexosPorMundo.remove(mundo.getUID());
         if (nexo != null) {
             nexo.destruir();
+            PluginManager.getInstance().getInvasionManager().shutdown();
             logger.info("§c❌ Nexo eliminado del mundo: " + mundo.getName());
             return true;
         }
