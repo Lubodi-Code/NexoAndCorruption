@@ -127,6 +127,10 @@ public class InvasionManager {
         invasionActiva = true;
         invasionInfinita = duracion < 0;
         Bukkit.broadcastMessage(Utils.colorize(config.getMensajeInicioEvento()));
+        if (!invasionInfinita) {
+            Bukkit.broadcastMessage(Utils.colorize(
+                config.getPrefijo() + "La invasión durará " + Utils.formatTime(duracion) + "."));
+        }
         estadoPrevio.clear();
         for (Nexo nexo : nexoManager.getTodosLosNexos().values()) {
             estadoPrevio.put(nexo, nexo.estaActivo());
