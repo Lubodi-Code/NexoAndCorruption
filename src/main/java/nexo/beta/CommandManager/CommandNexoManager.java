@@ -30,7 +30,7 @@ public class CommandNexoManager implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (args.length == 0) {
-            sender.sendMessage("§eUso: /" + label + " <crear|destruir|estado|activar|desactivar|reiniciar|recargar>");
+            sender.sendMessage("§eUso: /" + label + " <crear|destruir|estado|activar|desactivar|reiniciar|recargar|invasion>");
             return true;
         }
 
@@ -115,8 +115,22 @@ public class CommandNexoManager implements CommandExecutor {
                 plugin.reloadPlugin();
                 sender.sendMessage("§aPlugin recargado.");
                 break;
+            case "invasion":
+                Nexo nexoInv = nexoManager.getNexoEnMundo(sender instanceof Player p ? p.getWorld() : plugin.getServer().getWorlds().get(0));
+                if (nexoInv == null) {
+                    sender.sendMessage(config.getMensajeNexoNoEncontrado());
+                    return true;
+                }
+                if (nexoManager.getInvasionManager().isInvasionRunning()) {
+                    nexoManager.getInvasionManager().stopInvasion();
+                    sender.sendMessage("§eInvasión detenida.");
+                } else {
+                    nexoManager.getInvasionManager().startInvasion(nexoInv);
+                    sender.sendMessage("§aInvasión iniciada.");
+                }
+                break;
             default:
-                sender.sendMessage("§eUso: /" + label + " <crear|destruir|estado|activar|desactivar|reiniciar|recargar>");
+                sender.sendMessage("§eUso: /" + label + " <crear|destruir|estado|activar|desactivar|reiniciar|recargar|invasion>");
                 break;
         }
         return true;

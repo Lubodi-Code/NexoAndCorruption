@@ -391,8 +391,23 @@ public class ConfigManager {
     }
     
     public String getMensajeSinPermisos() {
-        return getPrefijo() + nexoConfig.getString("nexo.mensajes.sin_permisos", 
+        return getPrefijo() + nexoConfig.getString("nexo.mensajes.sin_permisos",
             "§cNo tienes permisos para usar este comando.");
+    }
+
+    public String getMensajeInvasionDuracion() {
+        return getPrefijo() + nexoConfig.getString("nexo.mensajes.invasion_duracion",
+                "⚔️ ¡Invasión en curso! Durará {minutos} minutos.");
+    }
+
+    public String getMensajeFinInvasion() {
+        return getPrefijo() + nexoConfig.getString("nexo.mensajes.invasion_fin",
+                "✅ La invasión ha terminado.");
+    }
+
+    public String getMensajeInvasionCancelada() {
+        return getPrefijo() + nexoConfig.getString("nexo.mensajes.invasion_cancelada",
+                "⛔ La invasión se ha detenido.");
     }
     
     // ==========================================
