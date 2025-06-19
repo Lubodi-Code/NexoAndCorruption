@@ -177,7 +177,9 @@ public class InvasionManager {
             if (world == null) continue;
 
             double angulo = rnd.nextDouble() * 2 * Math.PI;
-            double distancia = rnd.nextDouble() * config.getInvasionRadioSpawn();
+            int maxDist = config.getInvasionRadioSpawn();
+            int minDist = config.getRadioProteccion();
+            double distancia = minDist + rnd.nextDouble() * (maxDist - minDist);
             double x = centro.getX() + Math.cos(angulo) * distancia;
             double z = centro.getZ() + Math.sin(angulo) * distancia;
             double y = world.getHighestBlockYAt((int) x, (int) z) + 1;
