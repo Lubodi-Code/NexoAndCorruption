@@ -32,13 +32,13 @@ import nexo.beta.utils.BarrierUtils;
 import nexo.beta.utils.Utils;
 
 public class Nexo {
-    
+
     private final Location ubicacion;
     private ConfigManager configManager;
     private final Logger logger;
     private final String barrierId;
     private static final String WARDEN_TAG = "nexo_warden";
-    
+
     // Estados del Nexo
     private int vida;
     private int energia;
@@ -51,7 +51,7 @@ public class Nexo {
     // Radio de protección
     private int radioBase;
     private int radioActual;
-    
+
     // Sistema de partículas y efectos
     private BukkitTask taskParticulas;
     private BukkitTask taskEfectos;
@@ -60,15 +60,15 @@ public class Nexo {
     // Representación física del Nexo
     private Warden warden;
     private ArmorStand texturaStand;
-    
+
     // Control de mensajes críticos
     private long ultimoMensajeVidaBaja = 0;
     private long ultimoMensajeEnergiaBaja = 0;
-    
+
     // Archivo de guardado individual
     private File archivoGuardado;
     private FileConfiguration datosNexo;
-    
+
     /**
      * Constructor del Nexo
      */
@@ -77,7 +77,7 @@ public class Nexo {
         this.configManager = configManager;
         this.logger = Bukkit.getLogger();
         this.barrierId = "nexo_" + this.ubicacion.getWorld().getUID();
-        
+
         // Inicializar estados
         this.vida = configManager.getVidaMaxima();
         this.energia = configManager.getEnergiaMaxima();
@@ -85,10 +85,10 @@ public class Nexo {
         this.enEstadoCritico = false;
         this.radioBase = configManager.getRadioProteccion();
         this.radioActual = this.radioBase;
-        
+
         // Inicializar archivo de guardado
         inicializarArchivoGuardado();
-        
+
         // Cargar datos existentes
         cargarDatos();
 
@@ -102,32 +102,32 @@ public class Nexo {
         actualizarBarrera();
 
         iniciarEliminacionMobs();
-        
+
         if (configManager.isDebugHabilitado()) {
-            logger.info("§e[DEBUG] Nexo creado en: " + 
+            logger.info("§e[DEBUG] Nexo creado en: " +
                        ubicacion.getWorld().getName() + " " +
-                       ubicacion.getBlockX() + ", " + 
-                       ubicacion.getBlockY() + ", " + 
+                       ubicacion.getBlockX() + ", " +
+                       ubicacion.getBlockY() + ", " +
                        ubicacion.getBlockZ());
         }
     }
-    
+
     /**
      * Inicializa el archivo de guardado del Nexo
      */
     private void inicializarArchivoGuardado() {
-        String nombreArchivo = "nexo_" + ubicacion.getWorld().getName() + "_" + 
-                              ubicacion.getBlockX() + "_" + 
-                              ubicacion.getBlockY() + "_" + 
+        String nombreArchivo = "nexo_" + ubicacion.getWorld().getName() + "_" +
+                              ubicacion.getBlockX() + "_" +
+                              ubicacion.getBlockY() + "_" +
                               ubicacion.getBlockZ() + ".yml";
-        
-        archivoGuardado = new File(Bukkit.getPluginManager().getPlugin("NexoAndCorruption").getDataFolder(), 
+
+        archivoGuardado = new File(Bukkit.getPluginManager().getPlugin("NexoAndCorruption").getDataFolder(),
                                   "nexos/" + nombreArchivo);
-        
+
         if (!archivoGuardado.getParentFile().exists()) {
             archivoGuardado.getParentFile().mkdirs();
         }
-        
+
         if (!archivoGuardado.exists()) {
             try {
                 archivoGuardado.createNewFile();
@@ -135,10 +135,10 @@ public class Nexo {
                 logger.severe("§c❌ Error al crear archivo de guardado del Nexo: " + e.getMessage());
             }
         }
-        
+
         datosNexo = YamlConfiguration.loadConfiguration(archivoGuardado);
     }
-    
+
     /**
      * Carga los datos guardados del Nexo
      */
@@ -146,11 +146,11 @@ public class Nexo {
         if (datosNexo.contains("vida")) {
             this.vida = datosNexo.getInt("vida", configManager.getVidaMaxima());
         }
-        
+
         if (datosNexo.contains("energia")) {
             this.energia = datosNexo.getInt("energia", configManager.getEnergiaMaxima());
         }
-        
+
         if (datosNexo.contains("activo")) {
             this.activo = datosNexo.getBoolean("activo", true);
         }
@@ -162,17 +162,17 @@ public class Nexo {
         }
 
         this.radioBase = configManager.getRadioProteccion();
-        
+
         // Validar que los valores no excedan los máximos
         this.vida = Math.min(this.vida, configManager.getVidaMaxima());
         this.energia = Math.min(this.energia, configManager.getEnergiaMaxima());
-        
+
         if (configManager.isDebugHabilitado()) {
-            logger.info("§e[DEBUG] Datos del Nexo cargados - Vida: " + vida + 
+            logger.info("§e[DEBUG] Datos del Nexo cargados - Vida: " + vida +
                        ", Energía: " + energia + ", Activo: " + activo);
         }
     }
-    
+
     /**
      * Guarda los datos del Nexo
      */
@@ -183,19 +183,19 @@ public class Nexo {
             datosNexo.set("activo", activo);
             datosNexo.set("radio", radioActual);
             datosNexo.set("ultima_actualizacion", System.currentTimeMillis());
-            
+
             // Guardar ubicación
             datosNexo.set("ubicacion.mundo", ubicacion.getWorld().getName());
             datosNexo.set("ubicacion.x", ubicacion.getX());
             datosNexo.set("ubicacion.y", ubicacion.getY());
             datosNexo.set("ubicacion.z", ubicacion.getZ());
-            
+
             datosNexo.save(archivoGuardado);
-            
+
             if (configManager.isDebugHabilitado()) {
                 logger.info("§e[DEBUG] Datos del Nexo guardados correctamente");
             }
-            
+
         } catch (IOException e) {
             logger.severe("§c❌ Error al guardar datos del Nexo: " + e.getMessage());
         }
@@ -240,13 +240,13 @@ public class Nexo {
             warden.remove();
         }
     }
-    
+
     /**
      * Inicia los efectos visuales del Nexo
      */
     private void iniciarEfectosVisuales() {
         if (!configManager.isParticulasHabilitadas()) return;
-        
+
         // Task para partículas
         taskParticulas = new BukkitRunnable() {
             @Override
@@ -255,57 +255,57 @@ public class Nexo {
                     mostrarParticulas();
                 }
             }
-        }.runTaskTimer(Bukkit.getPluginManager().getPlugin("NexoAndCorruption"), 
+        }.runTaskTimer(Bukkit.getPluginManager().getPlugin("NexoAndCorruption"),
                       0L, configManager.getIntervaloParticulas() * 20L);
-        
+
         // Task para efectos de estado crítico
         taskEfectos = new BukkitRunnable() {
             @Override
             public void run() {
                 verificarEstadosCriticos();
             }
-        }.runTaskTimer(Bukkit.getPluginManager().getPlugin("NexoAndCorruption"), 
+        }.runTaskTimer(Bukkit.getPluginManager().getPlugin("NexoAndCorruption"),
                       20L, 20L); // Cada segundo
     }
-    
+
     /**
      * Muestra partículas del Nexo
      */
     private void mostrarParticulas() {
         if (ubicacion.getWorld() == null) return;
-        
+
         try {
             Particle particula = Particle.valueOf(configManager.getTipoParticula());
-            
+
             // Crear un efecto circular alrededor del Nexo
             for (int i = 0; i < configManager.getCantidadParticulas(); i++) {
                 double angulo = 2 * Math.PI * i / configManager.getCantidadParticulas();
                 double x = ubicacion.getX() + Math.cos(angulo) * 2;
                 double z = ubicacion.getZ() + Math.sin(angulo) * 2;
                 double y = ubicacion.getY() + 0.5;
-                
+
                 Location particleLocation = new Location(ubicacion.getWorld(), x, y, z);
                 ubicacion.getWorld().spawnParticle(particula, particleLocation, 1, 0, 0, 0, 0);
             }
-            
+
             // Partículas adicionales si está en estado crítico
             if (enEstadoCritico) {
-                ubicacion.getWorld().spawnParticle(Particle.SMOKE_NORMAL, 
-                                                 ubicacion.clone().add(0, 1, 0), 
+                ubicacion.getWorld().spawnParticle(Particle.SMOKE_NORMAL,
+                                                 ubicacion.clone().add(0, 1, 0),
                                                  5, 0.5, 0.5, 0.5, 0.01);
             }
-            
+
         } catch (IllegalArgumentException e) {
             logger.warning("§c⚠️ Tipo de partícula inválido: " + configManager.getTipoParticula());
         }
     }
-    
+
     /**
      * Verifica los estados críticos del Nexo
      */
     private void verificarEstadosCriticos() {
         long tiempoActual = System.currentTimeMillis();
-        
+
         // Verificar vida baja
         if (estaVidaBaja()) {
             if (tiempoActual - ultimoMensajeVidaBaja >= configManager.getIntervaloMensajeVidaBaja() * 1000L) {
@@ -313,7 +313,7 @@ public class Nexo {
                 ultimoMensajeVidaBaja = tiempoActual;
             }
         }
-        
+
         // Verificar energía baja
         if (estaEnergiaBaja()) {
             if (tiempoActual - ultimoMensajeEnergiaBaja >= configManager.getIntervaloMensajeEnergiaBaja() * 1000L) {
@@ -321,7 +321,7 @@ public class Nexo {
                 ultimoMensajeEnergiaBaja = tiempoActual;
             }
         }
-        
+
         boolean nuevoEstado = estaVidaBaja() || estaEnergiaBaja();
         if (nuevoEstado != enEstadoCritico) {
             enEstadoCritico = nuevoEstado;
@@ -330,7 +330,7 @@ public class Nexo {
             enEstadoCritico = nuevoEstado;
         }
     }
-    
+
     /**
      * Envía mensaje de vida baja
      */
@@ -339,14 +339,14 @@ public class Nexo {
         placeholders.put("vida", vida);
         placeholders.put("vida_maxima", configManager.getVidaMaxima());
         placeholders.put("porcentaje", getPorcentajeVida());
-        
+
         String mensaje = configManager.replacePlaceholders(
-            configManager.getPrefijo() + configManager.getMensajeVidaBaja(), 
+            configManager.getPrefijo() + configManager.getMensajeVidaBaja(),
             placeholders
         );
-        
+
         Bukkit.broadcastMessage(mensaje);
-        
+
         // Reproducir sonido
         if (configManager.isSonidosHabilitados()) {
             for (Player player : Bukkit.getOnlinePlayers()) {
@@ -356,7 +356,7 @@ public class Nexo {
             }
         }
     }
-    
+
     /**
      * Envía mensaje de energía baja
      */
@@ -365,14 +365,14 @@ public class Nexo {
         placeholders.put("energia", energia);
         placeholders.put("energia_maxima", configManager.getEnergiaMaxima());
         placeholders.put("porcentaje", getPorcentajeEnergia());
-        
+
         String mensaje = configManager.replacePlaceholders(
-            configManager.getPrefijo() + configManager.getMensajeEnergiaBaja(), 
+            configManager.getPrefijo() + configManager.getMensajeEnergiaBaja(),
             placeholders
         );
-        
+
         Bukkit.broadcastMessage(mensaje);
-        
+
         // Reproducir sonido
         if (configManager.isSonidosHabilitados()) {
             for (Player player : Bukkit.getOnlinePlayers()) {
@@ -382,13 +382,13 @@ public class Nexo {
             }
         }
     }
-    
+
     /**
      * Verifica si hay jugadores cerca del Nexo
      */
     public boolean hayJugadoresCerca(int radio, int minimoJugadores) {
         if (ubicacion.getWorld() == null) return false;
-        
+
         int jugadoresCerca = 0;
         for (Player player : ubicacion.getWorld().getPlayers()) {
             if (player.getLocation().distance(ubicacion) <= radio) {
@@ -398,21 +398,21 @@ public class Nexo {
                 }
             }
         }
-        
+
         return false;
     }
-    
+
     /**
      * Desactiva el Nexo
      */
     public void desactivar() {
         if (!activo) return;
-        
+
         activo = false;
-        
+
         // Enviar mensaje de desactivación
         Bukkit.broadcastMessage(configManager.getPrefijo() + configManager.getMensajeNexoDesactivado());
-        
+
         // Reproducir sonido de desactivación
         if (configManager.isSonidosHabilitados()) {
             for (Player player : Bukkit.getOnlinePlayers()) {
@@ -421,7 +421,7 @@ public class Nexo {
                 }
             }
         }
-        
+
         // Guardar estado
         guardar();
 
@@ -431,18 +431,18 @@ public class Nexo {
 
         logger.info("§c❌ Nexo desactivado en " + ubicacion.getWorld().getName());
     }
-    
+
     /**
      * Activa el Nexo
      */
     public void activar() {
         if (activo) return;
-        
+
         activo = true;
-        
+
         // Enviar mensaje de activación
         Bukkit.broadcastMessage(configManager.getPrefijo() + configManager.getMensajeNexoActivado());
-        
+
         // Reproducir sonido de activación
         if (configManager.isSonidosHabilitados()) {
             for (Player player : Bukkit.getOnlinePlayers()) {
@@ -451,7 +451,7 @@ public class Nexo {
                 }
             }
         }
-        
+
         // Guardar estado
         guardar();
 
@@ -461,7 +461,7 @@ public class Nexo {
 
         logger.info("§a✅ Nexo activado en " + ubicacion.getWorld().getName());
     }
-    
+
     /**
      * Inicia un proceso de reinicio del Nexo. Durante el reinicio el Nexo se
      * mantiene desactivado y al finalizar recupera todos sus valores.
@@ -557,7 +557,7 @@ public class Nexo {
         int max = 1200; // 20 minutos
         return (int) Math.round(max - (max - min) * porcentaje);
     }
-    
+
     /**
      * Destruye el Nexo y limpia sus recursos
      */
@@ -566,7 +566,7 @@ public class Nexo {
         if (taskParticulas != null && !taskParticulas.isCancelled()) {
             taskParticulas.cancel();
         }
-        
+
         if (taskEfectos != null && !taskEfectos.isCancelled()) {
             taskEfectos.cancel();
         }
@@ -575,7 +575,7 @@ public class Nexo {
             taskReinicio.cancel();
         }
         reiniciando = false;
-        
+
         // Guardar antes de destruir
         guardar();
 
@@ -590,7 +590,7 @@ public class Nexo {
 
         logger.info("§c❌ Nexo destruido en " + ubicacion.getWorld().getName());
     }
-    
+
     /**
      * Recarga la configuración del Nexo
      */
@@ -601,12 +601,12 @@ public class Nexo {
         if (radioActual < radioBase) {
             radioActual = radioBase;
         }
-        
+
         // Reiniciar efectos visuales con nueva configuración
         if (taskParticulas != null && !taskParticulas.isCancelled()) {
             taskParticulas.cancel();
         }
-        
+
         if (taskEfectos != null && !taskEfectos.isCancelled()) {
             taskEfectos.cancel();
         }
@@ -618,44 +618,44 @@ public class Nexo {
             iniciarEliminacionMobs();
         }
         actualizarBarrera();
-        
+
         logger.info("§a✅ Configuración del Nexo recargada");
     }
-    
+
     // ==========================================
     // MÉTODOS DE VERIFICACIÓN DE ESTADO
     // ==========================================
-    
+
     public boolean estaVidaBaja() {
         int porcentaje = (vida * 100) / configManager.getVidaMaxima();
         return porcentaje <= configManager.getPorcentajeVidaBaja();
     }
-    
+
     public boolean estaEnergiaBaja() {
         int porcentaje = (energia * 100) / configManager.getEnergiaMaxima();
         return porcentaje <= configManager.getPorcentajeEnergiaBaja();
     }
-    
+
     public int getPorcentajeVida() {
         return (vida * 100) / configManager.getVidaMaxima();
     }
-    
+
     public int getPorcentajeEnergia() {
         return (energia * 100) / configManager.getEnergiaMaxima();
     }
-    
+
     // ==========================================
     // GETTERS Y SETTERS
     // ==========================================
-    
+
     public Location getUbicacion() {
         return ubicacion.clone();
     }
-    
+
     public int getVida() {
         return vida;
     }
-    
+
     public void setVida(int vida) {
         this.vida = Math.max(0, Math.min(vida, configManager.getVidaMaxima()));
 
@@ -670,11 +670,11 @@ public class Nexo {
             destroyRepresentation();
         }
     }
-    
+
     public int getEnergia() {
         return energia;
     }
-    
+
     public void setEnergia(int energia) {
         this.energia = Math.max(0, Math.min(energia, configManager.getEnergiaMaxima()));
     }
@@ -682,11 +682,11 @@ public class Nexo {
     public void alimentar(int cantidad) {
         setEnergia(this.energia + cantidad);
     }
-    
+
     public boolean estaActivo() {
         return activo;
     }
-    
+
     public boolean estaEnEstadoCritico() {
         return enEstadoCritico;
     }
@@ -702,7 +702,7 @@ public class Nexo {
     public Warden getWarden() {
         return warden;
     }
-    
+
     public ConfigManager getConfigManager() {
         return configManager;
     }
