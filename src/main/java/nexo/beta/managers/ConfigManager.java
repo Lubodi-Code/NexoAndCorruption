@@ -97,11 +97,15 @@ public class ConfigManager {
     }
 
     public int getIntervaloReinicioMin() {
-        return nexoConfig.getInt("nexo.reinicio.intervalo_min", 3600);
+        return nexoConfig.getInt("nexo.reinicio.intervalo_min", 1);
     }
 
     public int getIntervaloReinicioMax() {
-        return nexoConfig.getInt("nexo.reinicio.intervalo_max", 10800);
+        return nexoConfig.getInt("nexo.reinicio.intervalo_max", 5);
+    }
+
+    public double getProbabilidadBaseReinicio() {
+        return nexoConfig.getDouble("nexo.reinicio.probabilidad_base", 0.1);
     }
 
     public List<Map<?, ?>> getAdvertenciasReinicio() {
