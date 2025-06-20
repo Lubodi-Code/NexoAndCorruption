@@ -469,11 +469,11 @@ public class ConfigManager {
     }
 
     public int getCorruptionAreaMin() {
-        return corruptionConfig.getInt("corruption.area_min", 20);
+        return corruptionConfig.getInt("corruption.area_min", 100);
     }
 
     public int getCorruptionAreaMax() {
-        return corruptionConfig.getInt("corruption.area_max", 50);
+        return corruptionConfig.getInt("corruption.area_max", 200);
     }
 
     public List<Material> getCorruptionBlocks() {
