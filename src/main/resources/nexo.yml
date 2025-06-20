@@ -30,10 +30,18 @@ nexo:
     mensaje_inicio: "El Nexo se está reiniciando..."
     mensaje_fin: "✅ El Nexo ha recuperado su estabilidad. La invasión ha terminado."
     mobs:
-      ZOMBIE: 0.4
-      SKELETON: 0.3
-      CREEPER: 0.2
-      WARDEN: 0.1
+      ZOMBIE: 0.2
+      SKELETON: 0.15
+      WITHER_SKELETON: 0.05
+      HUSK: 0.1
+      STRAY: 0.1
+      DROWNED: 0.1
+      SPIDER: 0.08
+      CAVE_SPIDER: 0.05
+      CREEPER: 0.15
+      WITHER: 0.01
+      WARDEN: 0.01
+
 
 
   # Sistema de protecciones
