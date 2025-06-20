@@ -35,6 +35,11 @@ public class CommandNexoManager implements CommandExecutor {
         }
 
         String sub = args[0].toLowerCase();
+
+        if (!sub.equals("estado") && sender instanceof Player p && !p.hasPermission("nexo.admin")) {
+            sender.sendMessage(config.getMensajeSinPermisos());
+            return true;
+        }
         switch (sub) {
             case "crear":
                 if (!(sender instanceof Player player)) {

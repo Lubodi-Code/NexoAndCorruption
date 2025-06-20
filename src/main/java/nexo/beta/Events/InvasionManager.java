@@ -7,6 +7,8 @@ import java.util.HashMap;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Monster;
@@ -155,6 +157,22 @@ public class InvasionManager {
             }
         }
         estadoPrevio.clear();
+
+        // Efecto de onda de choque al finalizar
+        for (Nexo nexo : nexoManager.getTodosLosNexos().values()) {
+            Location origin = nexo.getUbicacion();
+            if (origin.getWorld() == null) continue;
+            for (double r = 0; r < 2.5; r += 0.25) {
+                origin.getWorld().spawnParticle(
+                        Particle.CLOUD,
+                        origin.clone().add(0, 0.1, 0),
+                        20,
+                        r, 0.1, r,
+                        0.02
+                );
+            }
+            origin.getWorld().playSound(origin, Sound.ENTITY_GENERIC_EXPLODE, 0.8f, 1.0f);
+        }
     }
 
     public void detenerInvasion() {
