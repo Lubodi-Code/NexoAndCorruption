@@ -7,7 +7,7 @@ public class PluginManager {
     private ConfigManager configManager;
     private NexoManager nexoManager;
     private nexo.beta.Events.InvasionManager invasionManager;
-    private CorruptionManager corruptionManager;
+    private EnhancedCorruptionManager corruptionManager;
     private NexoAndCorruption plugin;
 
     public static PluginManager getInstance() {
@@ -66,7 +66,7 @@ public class PluginManager {
     }
 
     private void initializeCorruptionManager() {
-        corruptionManager = new CorruptionManager(plugin, nexoManager, configManager);
+        corruptionManager = new EnhancedCorruptionManager(plugin, nexoManager, configManager);
         corruptionManager.start();
         plugin.getLogger().info("§a✅ CorruptionManager inicializado");
     }
@@ -142,7 +142,7 @@ public class PluginManager {
         return invasionManager;
     }
 
-    public CorruptionManager getCorruptionManager() {
+    public EnhancedCorruptionManager getCorruptionManager() {
         return corruptionManager;
     }
 
