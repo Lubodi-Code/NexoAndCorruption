@@ -92,8 +92,7 @@ public class InvasionManager {
         } else if (invasionInfinita) {
             boolean finalizar = true;
             for (Nexo nexo : nexoManager.getTodosLosNexos().values()) {
-                if (nexo.estaReiniciando() || !nexo.estaActivo() ||
-                    nexo.getEnergia() < config.getEnergiaMaxima() / 2) {
+                if (!nexo.estaActivo()) {
                     finalizar = false;
                     break;
                 }
