@@ -1,0 +1,146 @@
+# ==========================================
+# CONFIGURACIÓN AVANZADA DE LA CORRUPCIÓN
+# ==========================================
+corruption:
+  habilitado: true
+  
+  # Configuración básica
+  intervalo_expansion: 200        # ticks entre ciclos de crecimiento
+  bloques_por_ciclo: 5           # operaciones por ciclo
+  area_min: 30                   # tamaño mínimo de zona
+  area_max: 80                   # tamaño máximo de zona
+  
+  # Configuración de crecimiento orgánico
+  crecimiento_organico:
+    habilitado: true
+    max_zonas_simultaneas: 5     # máximo de zonas creciendo a la vez
+    probabilidad_nueva_zona: 0.3  # probabilidad de crear nueva zona por ciclo
+    
+  # Patrones de estructuras
+  estructuras:
+    torres:
+      probabilidad: 0.3          # 30% de probabilidad
+      altura_min: 4
+      altura_max: 12
+      materiales:
+        - OBSIDIAN
+        - CRYING_OBSIDIAN
+        - BLACKSTONE
+        - POLISHED_BLACKSTONE
+      decoraciones:
+        - SOUL_FIRE
+        - SOUL_TORCH
+        - SOUL_LANTERN
+        
+    ramificaciones:
+      probabilidad: 0.4          # 40% de probabilidad
+      longitud_min: 3
+      longitud_max: 8
+      curvatura: 0.3             # qué tan curvas son las ramas
+      probabilidad_rama_secundaria: 0.2
+      materiales:
+        - NETHERRACK
+        - WARPED_STEM
+        - CRIMSON_STEM
+        - WARPED_HYPHAE
+        - CRIMSON_HYPHAE
+        
+    nodos_de_poder:
+      probabilidad: 0.2          # 20% de probabilidad
+      radio: 2                   # radio de la estructura esférica
+      materiales_nucleo:
+        - MAGMA_BLOCK
+        - GLOWSTONE
+        - SHROOMLIGHT
+      materiales_exterior:
+        - SOUL_SAND
+        - SOUL_SOIL
+        - BASALT
+      efectos:
+        particulas: SOUL_FIRE_FLAME
+        sonido: BLOCK_PORTAL_AMBIENT
+        
+    conexiones:
+      probabilidad: 0.1          # 10% de probabilidad
+      materiales:
+        - SOUL_SAND
+        - SOUL_SOIL
+        - BASALT
+        - BLACKSTONE
+        
+  # Configuración de comportamientos especiales
+  comportamientos:
+    # Las estructuras pueden crecer hacia la superficie
+    buscar_superficie: true
+    probabilidad_superficie: 0.6
+    
+    # Interacción entre estructuras
+    conexion_automatica: true     # conectar estructuras cercanas
+    distancia_conexion: 15        # distancia máxima para auto-conexión
+    
+    # Efectos ambientales
+    cambiar_bioma: true
+    bioma_corrupto: "NETHER_WASTES"
+    
+    # Criaturas específicas de la corrupción
+    spawn_criaturas:
+      habilitado: true
+      probabilidad: 0.05         # 5% por estructura
+      criaturas:
+        - WITHER_SKELETON
+        - BLAZE
+        - GHAST
+        - MAGMA_CUBE
+        
+  # Configuración de regeneración/limpieza
+  regeneracion:
+    habilitado: true
+    probabilidad_autolimpieza: 0.01  # muy baja probabilidad de auto-limpieza
+    items_limpieza:               # items que pueden limpiar la corrupción
+      - GOLDEN_APPLE
+      - ENCHANTED_GOLDEN_APPLE
+      - TOTEM_OF_UNDYING
+      
+  # Efectos visuales y sonoros
+  efectos:
+    particulas_ambientales:
+      habilitado: true
+      tipo: SOUL_FIRE_FLAME
+      cantidad: 3
+      radio: 10                  # radio alrededor de estructuras
+      
+    sonidos_ambientales:
+      habilitado: true
+      sonidos:
+        - AMBIENT_SOUL_SAND_VALLEY_MOOD
+        - BLOCK_PORTAL_AMBIENT
+        - ENTITY_WITHER_AMBIENT
+      volumen: 0.3
+      
+    # Efectos en los jugadores
+    efectos_jugadores:
+      habilitado: true
+      radio: 5                   # radio de efecto alrededor del jugador
+      efectos:
+        - "HUNGER:1:60"          # Hambre nivel 1 por 3 segundos
+        - "WEAKNESS:0:60"        # Debilidad nivel 0 por 3 segundos
+        - "SLOWNESS:0:40"        # Lentitud nivel 0 por 2 segundos
+
+# ==========================================
+# MENSAJES DE LA CORRUPCIÓN
+# ==========================================
+corruption_messages:
+  nueva_zona: "§4⚠️ Una nueva zona de corrupción está emergiendo..."
+  estructura_completada: "§c✦ La corrupción ha formado una nueva estructura maligna"
+  jugador_en_zona: "§5☠ Sientes la influencia de la corrupción..."
+  limpieza_exitosa: "§a✨ Has logrado purificar parte de la corrupción"
+  
+# ==========================================
+# DEBUG PARA CORRUPCIÓN
+# ==========================================
+corruption_debug:
+  habilitado: false
+  mostrar_creacion_estructuras: true
+  mostrar_conexiones: true
+  mostrar_efectos_jugadores: false
+  particulas_debug: false        # mostrar partículas para debug
