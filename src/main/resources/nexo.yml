@@ -23,10 +23,10 @@ nexo:
     habilitado: true
     aleatorio: true
     # Intervalos en minutos para programar revisiones de reinicio
-    intervalo_min: 1      # Mínimo 1 minuto
-    intervalo_max: 5      # Máximo 5 minutos
+    intervalo_min: 0.5      # Mínimo 30 segundos
+    intervalo_max: 1        # Máximo 1 minuto
     # Probabilidad base de que ocurra un reinicio cuando la batería está llena
-    probabilidad_base: 0.1
+    probabilidad_base: 0.3
 
     # Advertencias antes del reinicio
     advertencias:
