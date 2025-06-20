@@ -20,6 +20,8 @@ public class ConfigManager {
     private FileConfiguration config;
     private FileConfiguration nexoConfig;
     private File nexoFile;
+    private FileConfiguration corruptionConfig;
+    private File corruptionFile;
 
     public ConfigManager(JavaPlugin plugin) {
         this.plugin = plugin;
@@ -37,6 +39,13 @@ public class ConfigManager {
             plugin.saveResource("nexo.yml", false);
         }
         nexoConfig = YamlConfiguration.loadConfiguration(nexoFile);
+
+        // Cargar corruption.yml
+        corruptionFile = new File(plugin.getDataFolder(), "corruption.yml");
+        if (!corruptionFile.exists()) {
+            plugin.saveResource("corruption.yml", false);
+        }
+        corruptionConfig = YamlConfiguration.loadConfiguration(corruptionFile);
     }
 
     /**
@@ -46,6 +55,7 @@ public class ConfigManager {
         plugin.reloadConfig();
         config = plugin.getConfig();
         nexoConfig = YamlConfiguration.loadConfiguration(nexoFile);
+        corruptionConfig = YamlConfiguration.loadConfiguration(corruptionFile);
     }
 
     // ==========================================
@@ -447,27 +457,27 @@ public class ConfigManager {
     // ==========================================
 
     public boolean isCorruptionEnabled() {
-        return nexoConfig.getBoolean("corruption.habilitado", true);
+        return corruptionConfig.getBoolean("corruption.habilitado", true);
     }
 
     public int getCorruptionSpreadInterval() {
-        return nexoConfig.getInt("corruption.intervalo_expansion", 200);
+        return corruptionConfig.getInt("corruption.intervalo_expansion", 200);
     }
 
     public int getCorruptionBlocksPerCycle() {
-        return nexoConfig.getInt("corruption.bloques_por_ciclo", 5);
+        return corruptionConfig.getInt("corruption.bloques_por_ciclo", 5);
     }
 
     public int getCorruptionAreaMin() {
-        return nexoConfig.getInt("corruption.area_min", 20);
+        return corruptionConfig.getInt("corruption.area_min", 20);
     }
 
     public int getCorruptionAreaMax() {
-        return nexoConfig.getInt("corruption.area_max", 50);
+        return corruptionConfig.getInt("corruption.area_max", 50);
     }
 
     public List<Material> getCorruptionBlocks() {
-        List<String> names = nexoConfig.getStringList("corruption.bloques");
+        List<String> names = corruptionConfig.getStringList("corruption.bloques");
         List<Material> mats = new ArrayList<>();
         for (String name : names) {
             Material mat = Material.matchMaterial(name);
@@ -482,7 +492,7 @@ public class ConfigManager {
     }
 
     public double getCorruptionSurfaceProbability() {
-        return nexoConfig.getDouble("corruption.probabilidad_superficie", 0.8);
+        return corruptionConfig.getDouble("corruption.probabilidad_superficie", 0.8);
     }
 
     // ==========================================
@@ -505,6 +515,13 @@ public class ConfigManager {
      */
     public FileConfiguration getNexoConfig() {
         return nexoConfig;
+    }
+
+    /**
+     * Obtiene el archivo de configuración de la corrupción
+     */
+    public FileConfiguration getCorruptionConfig() {
+        return corruptionConfig;
     }
 
     /**
