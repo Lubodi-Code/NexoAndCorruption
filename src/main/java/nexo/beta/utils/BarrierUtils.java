@@ -213,8 +213,9 @@ public class BarrierUtils {
 
         if (!isActive) {
             color = Color.GRAY;
-            density = 600;
-            createPulseBarrier(nexoId + "_barrier", center, radius, particle, color);
+            density = 1000; // más partículas cuando está desactivado
+            createAdvancedBarrier(nexoId + "_barrier", center, radius, particle,
+                    color, density, false, true, 4);
         } else if (isCritical) {
             color = Color.RED;
             density = 500;

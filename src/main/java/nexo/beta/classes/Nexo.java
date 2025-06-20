@@ -381,6 +381,34 @@ public class Nexo {
     }
 
     /**
+     * Muestra efectos de daño al Nexo
+     */
+    private void mostrarDanio() {
+        if (ubicacion.getWorld() == null) return;
+
+        ubicacion.getWorld().spawnParticle(Particle.DAMAGE_INDICATOR,
+                ubicacion.clone().add(0, 1, 0), 10, 0.2, 0.2, 0.2, 0.1);
+
+        if (configManager.isSonidosHabilitados()) {
+            for (Player player : ubicacion.getWorld().getPlayers()) {
+                player.playSound(player.getLocation(), Sound.ENTITY_GENERIC_HURT,
+                        1.0f, 1.0f);
+            }
+        }
+
+        Map<String, Object> placeholders = new HashMap<>();
+        placeholders.put("vida", vida);
+        placeholders.put("vida_maxima", configManager.getVidaMaxima());
+        String msg = configManager.replacePlaceholders(
+                configManager.getMensajeNexoDanado(), placeholders);
+        Bukkit.broadcastMessage(msg);
+
+        if (estaVidaBaja()) {
+            enviarMensajeVidaBaja();
+        }
+    }
+
+    /**
      * Verifica si hay jugadores cerca del Nexo
      */
     public boolean hayJugadoresCerca(int radio, int minimoJugadores) {
@@ -556,6 +584,7 @@ public class Nexo {
     }
 
     public void setVida(int vida) {
+        int vidaAnterior = this.vida;
         this.vida = Math.max(0, Math.min(vida, configManager.getVidaMaxima()));
 
         if (warden != null && !warden.isDead()) {
@@ -563,10 +592,13 @@ public class Nexo {
             warden.setHealth(Math.max(0.0, Math.min(this.vida, max)));
         }
 
-        // Si la vida llega a 0, desactivar el Nexo
+        if (vidaAnterior > this.vida) {
+            mostrarDanio();
+        }
+
+        // Si la vida llega a 0, destruir por completo
         if (this.vida <= 0 && activo) {
-            desactivar();
-            destroyRepresentation();
+            destruir();
         }
     }
 

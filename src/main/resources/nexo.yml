@@ -31,16 +31,17 @@ nexo:
     mensaje_fin: "✅ El Nexo ha recuperado su estabilidad. La invasión ha terminado."
     mobs:
       ZOMBIE: 0.2
-      SKELETON: 0.15
-      WITHER_SKELETON: 0.05
+      SKELETON: 0.2
+      WITHER_SKELETON: 0.1
       HUSK: 0.1
       STRAY: 0.1
       DROWNED: 0.1
       SPIDER: 0.08
       CAVE_SPIDER: 0.05
       CREEPER: 0.15
-      WITHER: 0.01
-      WARDEN: 0.01
+      WITHER: 0.001
+      WARDEN: 0.001
+      GIANT: 0.001
 
 
 
@@ -158,6 +159,8 @@ nexo:
     # Mensajes de estado
     nexo_activado: "§a✅ El Nexo ha sido activado y está protegiendo el área."
     nexo_desactivado: "§c❌ El Nexo ha sido desactivado. ¡Cuidado!"
+    nexo_danado: "§c⚠️ ¡El Nexo está siendo atacado! ({vida}/{vida_maxima})"
+    invasion_activada: "§4⚠️ ¡La invasión ha comenzado!"
 
     # Mensajes de información
     estado_vida: "§6Vida del Nexo: §e{vida}§6/§e{vida_maxima} §6({porcentaje}%)"
