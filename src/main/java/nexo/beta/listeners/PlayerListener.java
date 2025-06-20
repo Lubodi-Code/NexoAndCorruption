@@ -40,7 +40,7 @@ public class PlayerListener implements Listener {
             case DIAMOND, EMERALD -> {
                 player.getInventory().getItemInMainHand().setAmount(
                     player.getInventory().getItemInMainHand().getAmount() - 1);
-                nexo.alimentar(50);
+                nexo.alimentar(5);
                 player.sendMessage("§aHas alimentado el Nexo.");
             }
             case AMETHYST_SHARD -> {

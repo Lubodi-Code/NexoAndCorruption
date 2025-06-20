@@ -38,6 +38,7 @@ public class Nexo {
     private final Logger logger;
     private final String barrierId;
     private static final String WARDEN_TAG = "nexo_warden";
+    private static final String DISINTEGRATING_TAG = "nexo_disintegrating";
 
     // Estados del Nexo
     private int vida;
@@ -53,6 +54,7 @@ public class Nexo {
     private BukkitTask taskParticulas;
     private BukkitTask taskEfectos;
     private BukkitTask taskEliminarMobs;
+    private int stepRunas = 0;
 
     // Representación física del Nexo
     private Warden warden;
@@ -284,6 +286,13 @@ public class Nexo {
                 Location particleLocation = new Location(ubicacion.getWorld(), x, y, z);
                 ubicacion.getWorld().spawnParticle(particula, particleLocation, 1, 0, 0, 0, 0);
             }
+
+            for (int i = 0; i < 36; i++) {
+                double angle = Math.toRadians(i * 10 + (stepRunas * 5));
+                Location p = ubicacion.clone().add(Math.cos(angle) * 1.2, 0.05, Math.sin(angle) * 1.2);
+                ubicacion.getWorld().spawnParticle(Particle.ENCHANTMENT_TABLE, p, 1, 0, 0, 0, 0);
+            }
+            stepRunas++;
 
             // Partículas adicionales si está en estado crítico
             if (enEstadoCritico) {
@@ -729,7 +738,10 @@ public class Nexo {
                         }
                         String name = m.getCustomName();
                         if (name == null || name.isBlank()) {
-                            m.remove();
+                            if (!m.getScoreboardTags().contains(DISINTEGRATING_TAG)) {
+                                m.addScoreboardTag(DISINTEGRATING_TAG);
+                                nexo.beta.utils.DisintegrationUtil.disintegrate(m);
+                            }
                         }
                     }
                 }
