@@ -441,6 +441,22 @@ public class ConfigManager {
     }
 
     // ==========================================
+    // MÉTODOS PARA LA CORRUPCIÓN
+    // ==========================================
+
+    public boolean isCorruptionEnabled() {
+        return nexoConfig.getBoolean("corruption.habilitado", true);
+    }
+
+    public int getCorruptionSpreadInterval() {
+        return nexoConfig.getInt("corruption.intervalo_expansion", 200);
+    }
+
+    public int getCorruptionBlocksPerCycle() {
+        return nexoConfig.getInt("corruption.bloques_por_ciclo", 5);
+    }
+
+    // ==========================================
     // MÉTODOS AUXILIARES
     // ==========================================
 
