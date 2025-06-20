@@ -98,7 +98,7 @@ public class NexoAndCorruption extends JavaPlugin {
         getLogger().info("§e[DEBUG] Ubicación del Nexo: " + config.getUbicacionNexo().toString());
         getLogger().info("§e[DEBUG] Nexos activos: " + nexo.getNexosActivos() + "/" + nexo.getTotalNexos());
         getLogger().info("§e[DEBUG] Regeneración habilitada: " + config.isRegeneracionHabilitada());
-        getLogger().info("§e[DEBUG] Eventos especiales: " + config.isEventosEspecialesHabilitado());
+        getLogger().info("§e[DEBUG] Intervalo de verificación de invasiones: " + config.getInvasionCheckInterval() + "s");
         getLogger().info("§e[DEBUG] ==========================================");
     }
 

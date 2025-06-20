@@ -38,7 +38,7 @@ public class InvasionManager {
     }
 
     public void start() {
-        long intervalo = 20L; // comprobar cada segundo
+        long intervalo = config.getInvasionCheckInterval() * 20L; // convertir segundos a ticks
         checkTask = new BukkitRunnable() {
             @Override
             public void run() {
@@ -72,27 +72,9 @@ public class InvasionManager {
 
     private void verificarCondiciones() {
         if (!invasionActiva) {
-            for (Nexo nexo : nexoManager.getTodosLosNexos().values()) {
-                if (!nexo.estaActivo()) {
-                    iniciarInvasion(-1);
-                    return;
-                }
-                double prob = config.getInvasionProbabilidad();
-                if (Math.random() <= prob) {
-                    iniciarCuentaRegresiva();
-                    return;
-                }
-            }
-        } else if (invasionInfinita) {
-            boolean finalizar = true;
-            for (Nexo nexo : nexoManager.getTodosLosNexos().values()) {
-                if (!nexo.estaActivo()) {
-                    finalizar = false;
-                    break;
-                }
-            }
-            if (finalizar) {
-                finalizarInvasion();
+            double prob = config.getInvasionProbabilidad();
+            if (Math.random() <= prob) {
+                iniciarCuentaRegresiva();
             }
         }
     }
@@ -177,7 +159,7 @@ public class InvasionManager {
 
             double angulo = rnd.nextDouble() * 2 * Math.PI;
             int maxDist = config.getInvasionRadioSpawn();
-            int minDist = config.getRadioProteccion();
+            int minDist = config.getInvasionRadioSpawnMin();
             double distancia = minDist + rnd.nextDouble() * (maxDist - minDist);
             double x = centro.getX() + Math.cos(angulo) * distancia;
             double z = centro.getZ() + Math.sin(angulo) * distancia;
