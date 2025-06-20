@@ -105,7 +105,11 @@ public class InvasionManager {
     private void iniciarInvasion(int duracion) {
         invasionActiva = true;
         invasionInfinita = duracion < 0;
+        Bukkit.broadcastMessage(Utils.colorize(config.getMensajeInvasionActivada()));
         Bukkit.broadcastMessage(Utils.colorize(config.getMensajeInicioEvento()));
+        for (org.bukkit.entity.Player p : Bukkit.getOnlinePlayers()) {
+            p.playSound(p.getLocation(), org.bukkit.Sound.ENTITY_WITHER_SPAWN, 1.0f, 1.0f);
+        }
         if (!invasionInfinita) {
             Bukkit.broadcastMessage(Utils.colorize(
                 config.getPrefijo() + "La invasión durará " + formatTime(duracion) + "."));
@@ -126,6 +130,12 @@ public class InvasionManager {
                         finalizarInvasion();
                         cancel();
                         return;
+                    }
+                    if (tiempo <= 5) {
+                        for (org.bukkit.entity.Player p : Bukkit.getOnlinePlayers()) {
+                            p.playSound(p.getLocation(), org.bukkit.Sound.BLOCK_NOTE_BLOCK_PLING, 1.0f, 1.5f);
+                            p.spawnParticle(org.bukkit.Particle.SMOKE_NORMAL, p.getLocation().add(0,1,0), 10, 0.5, 0.5, 0.5, 0.01);
+                        }
                     }
                     tiempo--;
                 }

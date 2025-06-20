@@ -377,6 +377,16 @@ public class ConfigManager {
             "§c❌ El Nexo ha sido desactivado. ¡Cuidado!");
     }
 
+    public String getMensajeNexoDanado() {
+        return getPrefijo() + nexoConfig.getString("nexo.mensajes.nexo_danado",
+                "§c⚠️ ¡El Nexo está siendo atacado! ({vida}/{vida_maxima})");
+    }
+
+    public String getMensajeInvasionActivada() {
+        return getPrefijo() + nexoConfig.getString("nexo.mensajes.invasion_activada",
+                "§4⚠️ ¡La invasión ha comenzado!");
+    }
+
     public String getMensajeEstadoVida() {
         return nexoConfig.getString("nexo.mensajes.estado_vida",
             "§6Vida del Nexo: §e{vida}§6/§e{vida_maxima} §6({porcentaje}%)");
