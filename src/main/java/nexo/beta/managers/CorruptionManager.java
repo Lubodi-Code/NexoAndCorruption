@@ -1,6 +1,7 @@
 package nexo.beta.managers;
 
 import java.util.Random;
+import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -24,6 +25,8 @@ public class CorruptionManager {
 
     private BukkitTask task;
     private final Random random = new Random();
+    private List<Material> blockTypes;
+    private double surfaceProbability;
 
     private Location currentCenter;
     private int currentSize;
@@ -33,6 +36,8 @@ public class CorruptionManager {
         this.plugin = plugin;
         this.nexoManager = nexoManager;
         this.config = config;
+        this.blockTypes = config.getCorruptionBlocks();
+        this.surfaceProbability = config.getCorruptionSurfaceProbability();
     }
 
     public void start() {
@@ -42,6 +47,8 @@ public class CorruptionManager {
         if (!config.isCorruptionEnabled()) return;
 
         long interval = config.getCorruptionSpreadInterval();
+        blockTypes = config.getCorruptionBlocks();
+        surfaceProbability = config.getCorruptionSurfaceProbability();
         currentCenter = null;
         currentSize = 0;
         targetSize = 0;
@@ -61,6 +68,8 @@ public class CorruptionManager {
 
     public void reload(ConfigManager newConfig) {
         this.config = newConfig;
+        this.blockTypes = newConfig.getCorruptionBlocks();
+        this.surfaceProbability = newConfig.getCorruptionSurfaceProbability();
         start();
     }
 
@@ -90,8 +99,10 @@ public class CorruptionManager {
             Chunk chunk = loaded[random.nextInt(loaded.length)];
             int x = random.nextInt(16);
             int z = random.nextInt(16);
-            int y = random.nextInt(world.getMaxHeight() - world.getMinHeight()) + world.getMinHeight();
-            Block block = chunk.getBlock(x, y, z);
+            int worldX = (chunk.getX() << 4) + x;
+            int worldZ = (chunk.getZ() << 4) + z;
+            int y = world.getHighestBlockYAt(worldX, worldZ);
+            Block block = world.getBlockAt(worldX, y, worldZ);
 
             Location loc = block.getLocation();
             if (nexoManager.estaEnZonaProtegida(loc)) continue;
@@ -114,17 +125,24 @@ public class CorruptionManager {
         if (world == null) return;
 
         int size = currentSize;
-        int y = currentCenter.getBlockY();
         int startX = currentCenter.getBlockX() - size / 2;
         int startZ = currentCenter.getBlockZ() - size / 2;
 
         for (int x = startX; x < startX + size; x++) {
             for (int z = startZ; z < startZ + size; z++) {
-                Block block = world.getBlockAt(x, y, z);
+                int blockY;
+                if (random.nextDouble() < surfaceProbability) {
+                    blockY = world.getHighestBlockYAt(x, z);
+                } else {
+                    int maxY = world.getHighestBlockYAt(x, z);
+                    blockY = random.nextInt(maxY - world.getMinHeight() + 1) + world.getMinHeight();
+                }
+                Block block = world.getBlockAt(x, blockY, z);
                 Location loc = block.getLocation();
                 if (nexoManager.estaEnZonaProtegida(loc)) continue;
-                if (block.getType() == Material.DIRT || block.getType() == Material.GRASS_BLOCK) {
-                    block.setType(Material.NETHERRACK);
+                if (block.getType() != Material.AIR && block.getType() != Material.BEDROCK) {
+                    Material newType = blockTypes.get(random.nextInt(blockTypes.size()));
+                    block.setType(newType);
                     if (config.isDebugHabilitado()) {
                         plugin.getLogger().info("[DEBUG] Bloque corrompido en " + loc.toVector());
                     }
