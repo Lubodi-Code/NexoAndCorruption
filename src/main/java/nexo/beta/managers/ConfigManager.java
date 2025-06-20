@@ -456,6 +456,14 @@ public class ConfigManager {
         return nexoConfig.getInt("corruption.bloques_por_ciclo", 5);
     }
 
+    public int getCorruptionAreaMin() {
+        return nexoConfig.getInt("corruption.area_min", 10);
+    }
+
+    public int getCorruptionAreaMax() {
+        return nexoConfig.getInt("corruption.area_max", 20);
+    }
+
     // ==========================================
     // MÉTODOS AUXILIARES
     // ==========================================

@@ -25,6 +25,10 @@ public class CorruptionManager {
     private BukkitTask task;
     private final Random random = new Random();
 
+    private Location currentCenter;
+    private int currentSize;
+    private int targetSize;
+
     public CorruptionManager(NexoAndCorruption plugin, NexoManager nexoManager, ConfigManager config) {
         this.plugin = plugin;
         this.nexoManager = nexoManager;
@@ -38,6 +42,9 @@ public class CorruptionManager {
         if (!config.isCorruptionEnabled()) return;
 
         long interval = config.getCorruptionSpreadInterval();
+        currentCenter = null;
+        currentSize = 0;
+        targetSize = 0;
         task = new BukkitRunnable() {
             @Override
             public void run() {
@@ -58,8 +65,24 @@ public class CorruptionManager {
     }
 
     private void ejecutarCiclo() {
-        int bloques = config.getCorruptionBlocksPerCycle();
-        for (int i = 0; i < bloques; i++) {
+        int pasos = config.getCorruptionBlocksPerCycle();
+
+        if (currentCenter == null || currentSize > targetSize) {
+            seleccionarNuevaZona();
+        }
+
+        for (int i = 0; i < pasos; i++) {
+            if (currentCenter == null) break;
+            if (currentSize > targetSize) {
+                currentCenter = null;
+                break;
+            }
+            expandirZona();
+        }
+    }
+
+    private void seleccionarNuevaZona() {
+        for (int intento = 0; intento < 5; intento++) {
             World world = elegirMundo();
             if (world == null) return;
             Chunk[] loaded = world.getLoadedChunks();
@@ -73,13 +96,42 @@ public class CorruptionManager {
             Location loc = block.getLocation();
             if (nexoManager.estaEnZonaProtegida(loc)) continue;
 
-            if (block.getType() == Material.DIRT || block.getType() == Material.GRASS_BLOCK) {
-                block.setType(Material.NETHERRACK);
-                if (config.isDebugHabilitado()) {
-                    plugin.getLogger().info("[DEBUG] Bloque corrompido en " + loc.toVector());
+            currentCenter = loc;
+            currentSize = 1;
+            int min = config.getCorruptionAreaMin();
+            int max = config.getCorruptionAreaMax();
+            targetSize = random.nextInt(max - min + 1) + min;
+            if (config.isDebugHabilitado()) {
+                plugin.getLogger().info("[DEBUG] Nueva zona de corrupción en " + loc.toVector() + " tamaño objetivo " + targetSize);
+            }
+            break;
+        }
+    }
+
+    private void expandirZona() {
+        if (currentCenter == null) return;
+        World world = currentCenter.getWorld();
+        if (world == null) return;
+
+        int size = currentSize;
+        int y = currentCenter.getBlockY();
+        int startX = currentCenter.getBlockX() - size / 2;
+        int startZ = currentCenter.getBlockZ() - size / 2;
+
+        for (int x = startX; x < startX + size; x++) {
+            for (int z = startZ; z < startZ + size; z++) {
+                Block block = world.getBlockAt(x, y, z);
+                Location loc = block.getLocation();
+                if (nexoManager.estaEnZonaProtegida(loc)) continue;
+                if (block.getType() == Material.DIRT || block.getType() == Material.GRASS_BLOCK) {
+                    block.setType(Material.NETHERRACK);
+                    if (config.isDebugHabilitado()) {
+                        plugin.getLogger().info("[DEBUG] Bloque corrompido en " + loc.toVector());
+                    }
                 }
             }
         }
+        currentSize++;
     }
 
     private World elegirMundo() {
