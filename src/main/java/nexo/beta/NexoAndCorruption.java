@@ -98,7 +98,6 @@ public class NexoAndCorruption extends JavaPlugin {
         getLogger().info("§e[DEBUG] Ubicación del Nexo: " + config.getUbicacionNexo().toString());
         getLogger().info("§e[DEBUG] Nexos activos: " + nexo.getNexosActivos() + "/" + nexo.getTotalNexos());
         getLogger().info("§e[DEBUG] Regeneración habilitada: " + config.isRegeneracionHabilitada());
-        getLogger().info("§e[DEBUG] Reinicio automático: " + config.isReinicioHabilitado());
         getLogger().info("§e[DEBUG] Eventos especiales: " + config.isEventosEspecialesHabilitado());
         getLogger().info("§e[DEBUG] ==========================================");
     }

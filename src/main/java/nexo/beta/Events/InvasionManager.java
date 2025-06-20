@@ -73,20 +73,14 @@ public class InvasionManager {
     private void verificarCondiciones() {
         if (!invasionActiva) {
             for (Nexo nexo : nexoManager.getTodosLosNexos().values()) {
-                if (nexo.estaReiniciando()) {
-                    iniciarInvasion(nexo.getTiempoReinicioRestante());
-                    return;
-                }
                 if (!nexo.estaActivo()) {
                     iniciarInvasion(-1);
                     return;
                 }
-                if (nexo.estaActivo()) {
-                    double prob = 0.9 * (1.0 - ((double) nexo.getEnergia() / config.getEnergiaMaxima()));
-                    if (Math.random() <= prob) {
-                        nexo.reiniciar();
-                        return;
-                    }
+                double prob = 0.9 * (1.0 - ((double) nexo.getEnergia() / config.getEnergiaMaxima()));
+                if (Math.random() <= prob) {
+                    iniciarCuentaRegresiva();
+                    return;
                 }
             }
         } else if (invasionInfinita) {
@@ -164,6 +158,12 @@ public class InvasionManager {
             }
         }
         estadoPrevio.clear();
+    }
+
+    public void detenerInvasion() {
+        if (invasionActiva) {
+            finalizarInvasion();
+        }
     }
 
     private void generarEntidades() {

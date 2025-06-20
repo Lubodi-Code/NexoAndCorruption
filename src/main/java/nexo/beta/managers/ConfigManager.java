@@ -85,34 +85,6 @@ public class ConfigManager {
     }
 
     // ==========================================
-    // MÉTODOS PARA SISTEMA DE REINICIO
-    // ==========================================
-
-    public boolean isReinicioHabilitado() {
-        return nexoConfig.getBoolean("nexo.reinicio.habilitado", true);
-    }
-
-    public boolean isReinicioAleatorio() {
-        return nexoConfig.getBoolean("nexo.reinicio.aleatorio", true);
-    }
-
-    public int getIntervaloReinicioMin() {
-        return nexoConfig.getInt("nexo.reinicio.intervalo_min", 1);
-    }
-
-    public int getIntervaloReinicioMax() {
-        return nexoConfig.getInt("nexo.reinicio.intervalo_max", 5);
-    }
-
-    public double getProbabilidadBaseReinicio() {
-        return nexoConfig.getDouble("nexo.reinicio.probabilidad_base", 0.1);
-    }
-
-    public List<Map<?, ?>> getAdvertenciasReinicio() {
-        return nexoConfig.getMapList("nexo.reinicio.advertencias");
-    }
-
-    // ==========================================
     // MÉTODOS PARA EVENTOS ESPECIALES
     // ==========================================
 

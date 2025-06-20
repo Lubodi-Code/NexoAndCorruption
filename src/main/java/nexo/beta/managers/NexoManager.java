@@ -29,7 +29,6 @@ public class NexoManager {
     private BukkitTask taskRegeneracion;
     private BukkitTask taskConsumoEnergia;
     private BukkitTask taskGuardadoAutomatico;
-    private BukkitTask taskReinicioProgramado;
 
     private NexoManager(NexoAndCorruption plugin, ConfigManager configManager) {
         this.plugin = plugin;
@@ -129,10 +128,6 @@ public class NexoManager {
             }.runTaskTimer(plugin, intervalo, intervalo);
         }
 
-        if (configManager.isReinicioHabilitado()) {
-            programarReinicio();
-        }
-
         logger.info("§a✅ Tareas automáticas del Nexo iniciadas");
     }
 
@@ -151,9 +146,6 @@ public class NexoManager {
         }
         if (taskGuardadoAutomatico != null && !taskGuardadoAutomatico.isCancelled()) {
             taskGuardadoAutomatico.cancel();
-        }
-        if (taskReinicioProgramado != null && !taskReinicioProgramado.isCancelled()) {
-            taskReinicioProgramado.cancel();
         }
 
         // Guardar todos los Nexos antes de cerrar
@@ -302,35 +294,6 @@ public class NexoManager {
     /**
      * Programa una verificación de reinicio de acuerdo a la configuración.
      */
-    private void programarReinicio() {
-        int min = configManager.getIntervaloReinicioMin();
-        int max = configManager.getIntervaloReinicioMax();
-        int intervalo = min;
-        if (max > min) {
-            intervalo = min + (int) (Math.random() * (max - min + 1));
-        }
-        long ticks = intervalo * 60L * 20L; // minutos a ticks
-        taskReinicioProgramado = new BukkitRunnable() {
-            @Override
-            public void run() {
-                verificarReinicioProbabilistico();
-                programarReinicio();
-            }
-        }.runTaskLater(plugin, ticks);
-    }
-
-    private void verificarReinicioProbabilistico() {
-        double base = configManager.getProbabilidadBaseReinicio();
-        for (Nexo nexo : nexosPorMundo.values()) {
-            if (!nexo.estaActivo() || nexo.estaReiniciando()) continue;
-            double energia = (double) nexo.getEnergia() / configManager.getEnergiaMaxima();
-            double prob = base * (1 + (1 - energia));
-            if (Math.random() <= prob) {
-                Bukkit.broadcastMessage(configManager.getPrefijo() + "⏳ El Nexo se reiniciará en 5 minutos.");
-                nexo.reiniciar();
-            }
-        }
-    }
 
     // ==========================================
     // MÉTODOS DE GUARDADO Y CARGA
@@ -364,9 +327,6 @@ public class NexoManager {
         }
         if (taskGuardadoAutomatico != null && !taskGuardadoAutomatico.isCancelled()) {
             taskGuardadoAutomatico.cancel();
-        }
-        if (taskReinicioProgramado != null && !taskReinicioProgramado.isCancelled()) {
-            taskReinicioProgramado.cancel();
         }
 
         // Recargar configuración de todos los Nexos

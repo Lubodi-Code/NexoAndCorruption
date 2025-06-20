@@ -99,13 +99,8 @@ public class CommandNexoManager implements CommandExecutor {
                     sender.sendMessage("§cComando deshabilitado.");
                     return true;
                 }
-                Nexo nexoRei = nexoManager.getNexoEnMundo(sender instanceof Player p ? p.getWorld() : plugin.getServer().getWorlds().get(0));
-                if (nexoRei == null) {
-                    sender.sendMessage(config.getMensajeNexoNoEncontrado());
-                    return true;
-                }
-                nexoRei.reiniciar();
-                sender.sendMessage("§aNexo reiniciado.");
+                plugin.getPluginManager().getInvasionManager().forzarInvasion();
+                sender.sendMessage("§aEl Nexo se está reiniciando...");
                 break;
             case "expandir":
                 if (args.length < 2) {
