@@ -27,6 +27,8 @@ public class InvasionManager {
 
     private BukkitTask checkTask;
     private BukkitTask spawnTask;
+    /** Indica si existe una invasión en curso (desde el aviso hasta su fin). */
+    private boolean invasionEnCurso = false;
     private boolean invasionActiva = false;
     private boolean invasionInfinita = false;
     private final Map<Nexo, Boolean> estadoPrevio = new HashMap<>();
@@ -55,6 +57,7 @@ public class InvasionManager {
             spawnTask.cancel();
         }
         invasionActiva = false;
+        invasionEnCurso = false;
         estadoPrevio.clear();
     }
 
@@ -65,13 +68,13 @@ public class InvasionManager {
     }
 
     public void forzarInvasion() {
-        if (!invasionActiva) {
+        if (!invasionEnCurso) {
             iniciarCuentaRegresiva();
         }
     }
 
     private void verificarCondiciones() {
-        if (!invasionActiva) {
+        if (!invasionEnCurso) {
             double prob = config.getInvasionProbabilidad();
             if (Math.random() <= prob) {
                 iniciarCuentaRegresiva();
@@ -80,6 +83,7 @@ public class InvasionManager {
     }
 
     private void iniciarCuentaRegresiva() {
+        invasionEnCurso = true;
         Bukkit.broadcastMessage(Utils.colorize(config.getMensajePrevioEvento()));
         new BukkitRunnable() {
             int tiempo = config.getInvasionAdvertencia();
@@ -132,6 +136,7 @@ public class InvasionManager {
 
     private void finalizarInvasion() {
         invasionActiva = false;
+        invasionEnCurso = false;
         invasionInfinita = false;
         Bukkit.broadcastMessage(Utils.colorize(config.getMensajeFinEvento()));
         for (Map.Entry<Nexo, Boolean> entry : estadoPrevio.entrySet()) {
@@ -143,7 +148,7 @@ public class InvasionManager {
     }
 
     public void detenerInvasion() {
-        if (invasionActiva) {
+        if (invasionEnCurso) {
             finalizarInvasion();
         }
     }
@@ -203,5 +208,12 @@ public class InvasionManager {
         if (minutes > 0) sb.append(minutes).append("m ");
         if (seconds > 0 || sb.length() == 0) sb.append(seconds).append("s");
         return sb.toString().trim();
+    }
+
+    /**
+     * Indica si existe una invasión en curso (contando o activa).
+     */
+    public boolean isInvasionEnCurso() {
+        return invasionEnCurso;
     }
 }
