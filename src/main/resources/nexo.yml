@@ -179,3 +179,10 @@ debug:
   mostrar_coordenadas: true
   mostrar_calculos_energia: false
   mostrar_eventos: true
+# ==========================================
+# CONFIGURACIÓN DE LA CORRUPCIÓN
+# ==========================================
+corruption:
+  habilitado: true
+  intervalo_expansion: 200    # ticks entre ciclos de expansión
+  bloques_por_ciclo: 5        # bloques a corromper por ciclo

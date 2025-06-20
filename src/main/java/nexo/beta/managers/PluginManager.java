@@ -7,6 +7,7 @@ public class PluginManager {
     private ConfigManager configManager;
     private NexoManager nexoManager;
     private nexo.beta.Events.InvasionManager invasionManager;
+    private CorruptionManager corruptionManager;
     private NexoAndCorruption plugin;
 
     public static PluginManager getInstance() {
@@ -30,6 +31,7 @@ public class PluginManager {
             initializeNexoManager();
 
             initializeInvasionManager();
+            initializeCorruptionManager();
 
             plugin.getLogger().info("§a✅ Todos los managers inicializados correctamente");
 
@@ -63,6 +65,12 @@ public class PluginManager {
         plugin.getLogger().info("§a✅ InvasionManager inicializado");
     }
 
+    private void initializeCorruptionManager() {
+        corruptionManager = new CorruptionManager(plugin, nexoManager, configManager);
+        corruptionManager.start();
+        plugin.getLogger().info("§a✅ CorruptionManager inicializado");
+    }
+
     /**
      * Detiene todos los managers
      */
@@ -76,6 +84,10 @@ public class PluginManager {
 
         if (invasionManager != null) {
             invasionManager.shutdown();
+        }
+
+        if (corruptionManager != null) {
+            corruptionManager.shutdown();
         }
 
         plugin.getLogger().info("§a✅ Todos los managers detenidos correctamente");
@@ -102,6 +114,10 @@ public class PluginManager {
                 invasionManager.reload(configManager);
             }
 
+            if (corruptionManager != null) {
+                corruptionManager.reload(configManager);
+            }
+
             plugin.getLogger().info("§a✅ Todos los managers recargados correctamente");
 
         } catch (Exception e) {
@@ -124,6 +140,10 @@ public class PluginManager {
 
     public nexo.beta.Events.InvasionManager getInvasionManager() {
         return invasionManager;
+    }
+
+    public CorruptionManager getCorruptionManager() {
+        return corruptionManager;
     }
 
     public NexoAndCorruption getPlugin() {
