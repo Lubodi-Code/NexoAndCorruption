@@ -280,6 +280,15 @@ public class ConfigManager {
         }
     }
 
+    public Sound getSonidoMuerte() {
+        String soundName = nexoConfig.getString("nexo.efectos.sonidos.muerte", "ENTITY_WITHER_DEATH");
+        try {
+            return Sound.valueOf(soundName);
+        } catch (IllegalArgumentException e) {
+            return Sound.ENTITY_WITHER_DEATH;
+        }
+    }
+
     // ==========================================
     // MÉTODOS PARA ESTADOS CRÍTICOS
     // ==========================================
@@ -313,6 +322,10 @@ public class ConfigManager {
     public String getMensajeNexoInactivo() {
         return nexoConfig.getString("nexo.estados_criticos.nexo_inactivo.mensaje",
             "💀 ¡EL NEXO HA CAÍDO! Las protecciones han desaparecido.");
+    }
+
+    public boolean isBroadcastNexoInactivo() {
+        return nexoConfig.getBoolean("nexo.estados_criticos.nexo_inactivo.broadcast", true);
     }
 
     // ==========================================
