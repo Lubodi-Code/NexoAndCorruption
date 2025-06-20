@@ -7,8 +7,8 @@ corruption:
   # Configuración básica
   intervalo_expansion: 200        # ticks entre ciclos de crecimiento
   bloques_por_ciclo: 5           # operaciones por ciclo
-  area_min: 30                   # tamaño mínimo de zona
-  area_max: 80                   # tamaño máximo de zona
+  area_min: 100                  # tamaño mínimo de zona
+  area_max: 200                  # tamaño máximo de zona
   
   # Configuración de crecimiento orgánico
   crecimiento_organico:
