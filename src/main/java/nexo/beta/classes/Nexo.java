@@ -420,6 +420,26 @@ public class Nexo {
     }
 
     /**
+     * Envía un mensaje global y reproduce un sonido cuando el Nexo muere.
+     */
+    private void enviarMensajeMuerte() {
+        String mensaje = configManager.getPrefijo() + configManager.getMensajeNexoInactivo();
+        if (configManager.isBroadcastNexoInactivo()) {
+            Bukkit.broadcastMessage(mensaje);
+        } else if (ubicacion.getWorld() != null) {
+            for (Player player : ubicacion.getWorld().getPlayers()) {
+                player.sendMessage(mensaje);
+            }
+        }
+
+        if (configManager.isSonidosHabilitados()) {
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                player.playSound(player.getLocation(), configManager.getSonidoMuerte(), 1.0f, 1.0f);
+            }
+        }
+    }
+
+    /**
      * Verifica si hay jugadores cerca del Nexo
      */
     public boolean hayJugadoresCerca(int radio, int minimoJugadores) {
@@ -610,6 +630,7 @@ public class Nexo {
         // Si la vida llega a 0, eliminar el Nexo por completo
         if (this.vida <= 0 && activo) {
             mostrarDestruccion();
+            enviarMensajeMuerte();
             nexo.beta.managers.NexoManager manager = nexo.beta.managers.NexoManager.getInstance();
             if (manager != null) {
                 manager.eliminarNexo(ubicacion.getWorld());

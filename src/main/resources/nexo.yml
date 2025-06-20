@@ -97,6 +97,7 @@ nexo:
       energia_baja: "BLOCK_NOTE_BLOCK_BASS"
       vida_baja: "ENTITY_VILLAGER_HURT"
       reinicio: "BLOCK_END_PORTAL_SPAWN"
+      muerte: "ENTITY_WITHER_DEATH"
 
   # Configuración de estados críticos
   estados_criticos:
