@@ -186,5 +186,11 @@ corruption:
   habilitado: true
   intervalo_expansion: 200    # ticks entre ciclos de expansión
   bloques_por_ciclo: 5        # bloques a corromper por ciclo
-  area_min: 10                # tamaño mínimo del área inicial de corrupción
-  area_max: 20                # tamaño máximo del área inicial de corrupción
+  area_min: 20                # tamaño mínimo del área inicial de corrupción
+  area_max: 50                # tamaño máximo del área inicial de corrupción
+  bloques:
+    - NETHERRACK
+    - COBBLED_DEEPSLATE
+    - OBSIDIAN
+    - SOUL_SAND
+  probabilidad_superficie: 0.8  # probabilidad de corromper bloques en la superficie

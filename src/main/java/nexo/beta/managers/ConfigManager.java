@@ -1,12 +1,14 @@
 package nexo.beta.managers;
 import java.io.File;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Map;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.World;
+import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -457,11 +459,30 @@ public class ConfigManager {
     }
 
     public int getCorruptionAreaMin() {
-        return nexoConfig.getInt("corruption.area_min", 10);
+        return nexoConfig.getInt("corruption.area_min", 20);
     }
 
     public int getCorruptionAreaMax() {
-        return nexoConfig.getInt("corruption.area_max", 20);
+        return nexoConfig.getInt("corruption.area_max", 50);
+    }
+
+    public List<Material> getCorruptionBlocks() {
+        List<String> names = nexoConfig.getStringList("corruption.bloques");
+        List<Material> mats = new ArrayList<>();
+        for (String name : names) {
+            Material mat = Material.matchMaterial(name);
+            if (mat != null) {
+                mats.add(mat);
+            }
+        }
+        if (mats.isEmpty()) {
+            mats.add(Material.NETHERRACK);
+        }
+        return mats;
+    }
+
+    public double getCorruptionSurfaceProbability() {
+        return nexoConfig.getDouble("corruption.probabilidad_superficie", 0.8);
     }
 
     // ==========================================
