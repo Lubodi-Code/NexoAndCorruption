@@ -2,6 +2,8 @@ package nexo.beta.managers;
 
 import java.util.Random;
 import java.util.List;
+import java.util.Set;
+import java.util.HashSet;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -31,6 +33,26 @@ public class CorruptionManager {
     private Location currentCenter;
     private int currentSize;
     private int targetSize;
+
+    // Materiales que se consideran transparentes/no sólidos
+    private static final Set<Material> TRANSPARENT_MATERIALS = new HashSet<>();
+    
+    static {
+        TRANSPARENT_MATERIALS.add(Material.AIR);
+        TRANSPARENT_MATERIALS.add(Material.WATER);
+        TRANSPARENT_MATERIALS.add(Material.LAVA);
+        TRANSPARENT_MATERIALS.add(Material.TALL_GRASS);
+        TRANSPARENT_MATERIALS.add(Material.GRASS);
+        TRANSPARENT_MATERIALS.add(Material.FERN);
+        TRANSPARENT_MATERIALS.add(Material.LARGE_FERN);
+        TRANSPARENT_MATERIALS.add(Material.DEAD_BUSH);
+        TRANSPARENT_MATERIALS.add(Material.SNOW);
+        TRANSPARENT_MATERIALS.add(Material.VINE);
+        TRANSPARENT_MATERIALS.add(Material.KELP);
+        TRANSPARENT_MATERIALS.add(Material.KELP_PLANT);
+        TRANSPARENT_MATERIALS.add(Material.SEAGRASS);
+        TRANSPARENT_MATERIALS.add(Material.TALL_SEAGRASS);
+    }
 
     public CorruptionManager(NexoAndCorruption plugin, NexoManager nexoManager, ConfigManager config) {
         this.plugin = plugin;
@@ -101,10 +123,12 @@ public class CorruptionManager {
             int z = random.nextInt(16);
             int worldX = (chunk.getX() << 4) + x;
             int worldZ = (chunk.getZ() << 4) + z;
-            int y = world.getHighestBlockYAt(worldX, worldZ);
-            Block block = world.getBlockAt(worldX, y, worldZ);
+            
+            // Buscar el bloque de superficie real
+            Block surfaceBlock = encontrarBloqueDSuperficie(world, worldX, worldZ);
+            if (surfaceBlock == null) continue;
 
-            Location loc = block.getLocation();
+            Location loc = surfaceBlock.getLocation();
             if (nexoManager.estaEnZonaProtegida(loc)) continue;
 
             currentCenter = loc;
@@ -119,6 +143,59 @@ public class CorruptionManager {
         }
     }
 
+    /**
+     * Encuentra el bloque sólido de superficie en las coordenadas X,Z dadas
+     * @param world El mundo
+     * @param x Coordenada X
+     * @param z Coordenada Z
+     * @return El bloque de superficie o null si no se encuentra
+     */
+    private Block encontrarBloqueDSuperficie(World world, int x, int z) {
+        int maxY = world.getHighestBlockYAt(x, z);
+        
+        // Buscar desde arriba hacia abajo el primer bloque sólido
+        for (int y = maxY; y >= world.getMinHeight(); y--) {
+            Block block = world.getBlockAt(x, y, z);
+            Material type = block.getType();
+            
+            // Si encontramos un bloque sólido (no transparente)
+            if (!TRANSPARENT_MATERIALS.contains(type) && type != Material.BEDROCK) {
+                return block;
+            }
+        }
+        
+        return null; // No se encontró superficie válida
+    }
+
+    /**
+     * Encuentra múltiples bloques de superficie en una ubicación (para diferentes alturas)
+     * @param world El mundo
+     * @param x Coordenada X
+     * @param z Coordenada Z
+     * @return Lista de bloques de superficie válidos
+     */
+    private List<Block> encontrarTodosLosBloquesDeSupericie(World world, int x, int z) {
+        List<Block> surfaceBlocks = new java.util.ArrayList<>();
+        int maxY = world.getHighestBlockYAt(x, z);
+        boolean foundAir = false;
+        
+        // Buscar desde arriba hacia abajo
+        for (int y = maxY; y >= world.getMinHeight(); y--) {
+            Block block = world.getBlockAt(x, y, z);
+            Material type = block.getType();
+            
+            if (TRANSPARENT_MATERIALS.contains(type)) {
+                foundAir = true;
+            } else if (foundAir && type != Material.BEDROCK) {
+                // Encontramos un bloque sólido después de aire = superficie
+                surfaceBlocks.add(block);
+                foundAir = false;
+            }
+        }
+        
+        return surfaceBlocks;
+    }
+
     private void expandirZona() {
         if (currentCenter == null) return;
         World world = currentCenter.getWorld();
@@ -130,21 +207,34 @@ public class CorruptionManager {
 
         for (int x = startX; x < startX + size; x++) {
             for (int z = startZ; z < startZ + size; z++) {
-                int blockY;
+                Block targetBlock = null;
+                
                 if (random.nextDouble() < surfaceProbability) {
-                    blockY = world.getHighestBlockYAt(x, z);
+                    // Buscar bloque de superficie
+                    targetBlock = encontrarBloqueDSuperficie(world, x, z);
                 } else {
+                    // Buscar bloque subterráneo aleatorio
                     int maxY = world.getHighestBlockYAt(x, z);
-                    blockY = random.nextInt(maxY - world.getMinHeight() + 1) + world.getMinHeight();
+                    int randomY = random.nextInt(maxY - world.getMinHeight() + 1) + world.getMinHeight();
+                    Block block = world.getBlockAt(x, randomY, z);
+                    
+                    // Verificar que sea un bloque sólido válido
+                    if (!TRANSPARENT_MATERIALS.contains(block.getType()) && 
+                        block.getType() != Material.BEDROCK) {
+                        targetBlock = block;
+                    }
                 }
-                Block block = world.getBlockAt(x, blockY, z);
-                Location loc = block.getLocation();
-                if (nexoManager.estaEnZonaProtegida(loc)) continue;
-                if (block.getType() != Material.AIR && block.getType() != Material.BEDROCK) {
+                
+                if (targetBlock != null) {
+                    Location loc = targetBlock.getLocation();
+                    if (nexoManager.estaEnZonaProtegida(loc)) continue;
+                    
                     Material newType = blockTypes.get(random.nextInt(blockTypes.size()));
-                    block.setType(newType);
+                    targetBlock.setType(newType);
+                    
                     if (config.isDebugHabilitado()) {
-                        plugin.getLogger().info("[DEBUG] Bloque corrompido en " + loc.toVector());
+                        plugin.getLogger().info("[DEBUG] Bloque corrompido en " + loc.toVector() + 
+                                              " (era " + targetBlock.getType() + ", ahora " + newType + ")");
                     }
                 }
             }
