@@ -409,6 +409,17 @@ public class Nexo {
     }
 
     /**
+     * Muestra un destello y sonido de explosión al destruirse el Nexo
+     */
+    private void mostrarDestruccion() {
+        if (ubicacion.getWorld() == null) return;
+
+        ubicacion.getWorld().spawnParticle(Particle.FLASH, ubicacion, 50, 1, 1, 1, 0);
+        ubicacion.getWorld().spawnParticle(Particle.EXPLOSION_HUGE, ubicacion, 1);
+        ubicacion.getWorld().playSound(ubicacion, Sound.ENTITY_GENERIC_EXPLODE, 2.0f, 1.0f);
+    }
+
+    /**
      * Verifica si hay jugadores cerca del Nexo
      */
     public boolean hayJugadoresCerca(int radio, int minimoJugadores) {
@@ -596,9 +607,15 @@ public class Nexo {
             mostrarDanio();
         }
 
-        // Si la vida llega a 0, destruir por completo
+        // Si la vida llega a 0, eliminar el Nexo por completo
         if (this.vida <= 0 && activo) {
-            destruir();
+            mostrarDestruccion();
+            nexo.beta.managers.NexoManager manager = nexo.beta.managers.NexoManager.getInstance();
+            if (manager != null) {
+                manager.eliminarNexo(ubicacion.getWorld());
+            } else {
+                destruir();
+            }
         }
     }
 
