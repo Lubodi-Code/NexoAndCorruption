@@ -42,6 +42,7 @@
                     <include>plugin.yml</include>
                     <include>config.yml</include>
                     <include>nexo.yml</include>
+                    <include>corruption.yml</include>
                 </includes>
             </resource>
         </resources>
