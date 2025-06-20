@@ -1,5 +1,6 @@
 package nexo.beta.managers;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -8,6 +9,8 @@ import java.util.logging.Logger;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -74,11 +77,38 @@ public class NexoManager {
      */
     private void loadExistingNexos() {
         try {
+            File nexoDir = new File(plugin.getDataFolder(), "nexos");
+            if (nexoDir.exists()) {
+                File[] archivos = nexoDir.listFiles((d, name) -> name.endsWith(".yml"));
+                if (archivos != null && archivos.length > 0) {
+                    for (File archivo : archivos) {
+                        FileConfiguration data = YamlConfiguration.loadConfiguration(archivo);
+                        String mundoStr = data.getString("ubicacion.mundo");
+                        double x = data.getDouble("ubicacion.x");
+                        double y = data.getDouble("ubicacion.y");
+                        double z = data.getDouble("ubicacion.z");
+                        World mundo = Bukkit.getWorld(mundoStr);
+                        if (mundo == null) continue;
+
+                        Location loc = new Location(mundo, x, y, z);
+                        Nexo nexo = new Nexo(loc, configManager);
+                        nexosPorMundo.put(mundo.getUID(), nexo);
+
+                        if (configManager.isDebugHabilitado()) {
+                            logger.info("§e[DEBUG] Nexo cargado desde archivo: " + archivo.getName());
+                        }
+                    }
+
+                    if (!nexosPorMundo.isEmpty()) {
+                        return; // Ya se cargaron nexos desde archivos
+                    }
+                }
+            }
+
             Location ubicacion = configManager.getUbicacionNexo();
             World mundo = ubicacion.getWorld();
 
             if (mundo != null) {
-                // Crear o cargar el Nexo para este mundo
                 Nexo nexo = new Nexo(ubicacion, configManager);
                 nexosPorMundo.put(mundo.getUID(), nexo);
 
