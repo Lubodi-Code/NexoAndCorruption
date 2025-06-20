@@ -85,43 +85,23 @@ public class ConfigManager {
     }
 
     // ==========================================
-    // MÉTODOS PARA EVENTOS ESPECIALES
+    // MÉTODOS PARA INVASIONES
     // ==========================================
 
-    public boolean isEventosEspecialesHabilitado() {
-        return nexoConfig.getBoolean("nexo.eventos_especiales.habilitado", true);
-    }
-
-    public double getProbabilidadEventoEspecial() {
-        return nexoConfig.getDouble("nexo.eventos_especiales.probabilidad", 0.25);
-    }
-
     public String getMensajePrevioEvento() {
-        return nexoConfig.getString("nexo.eventos_especiales.mensaje_previo",
+        return nexoConfig.getString("nexo.invasion.mensaje_previo",
             "‼️ El Nexo siente una gran perturbación en la energía...");
     }
 
     public String getMensajeInicioEvento() {
-        return nexoConfig.getString("nexo.eventos_especiales.mensaje_inicio",
-            "🔥 ¡INVASIÓN ESPECIAL ACTIVADA! Las defensas del Nexo han fallado.");
+        return nexoConfig.getString("nexo.invasion.mensaje_inicio",
+            "🔥 ¡INVASIÓN ACTIVADA! Las defensas del Nexo han fallado.");
     }
 
     public String getMensajeFinEvento() {
-        return nexoConfig.getString("nexo.eventos_especiales.mensaje_fin",
+        return nexoConfig.getString("nexo.invasion.mensaje_fin",
             "✅ El Nexo ha recuperado su estabilidad. La invasión ha terminado.");
     }
-
-    public int getDuracionEventoEspecial() {
-        return nexoConfig.getInt("nexo.eventos_especiales.duracion", 1200);
-    }
-
-    public List<Map<?, ?>> getEfectosEventoEspecial() {
-        return nexoConfig.getMapList("nexo.eventos_especiales.efectos");
-    }
-
-    // ==========================================
-    // MÉTODOS PARA INVASIONES
-    // ==========================================
 
     public double getInvasionProbabilidad() {
         return nexoConfig.getDouble("nexo.invasion.probabilidad", 0.1);
@@ -137,6 +117,14 @@ public class ConfigManager {
 
     public int getInvasionRadioSpawn() {
         return nexoConfig.getInt("nexo.invasion.radio_spawn", 100);
+    }
+
+    public int getInvasionRadioSpawnMin() {
+        return nexoConfig.getInt("nexo.invasion.radio_spawn_min", 80);
+    }
+
+    public int getInvasionCheckInterval() {
+        return nexoConfig.getInt("nexo.invasion.check_interval", 60);
     }
 
     public Map<String, Double> getInvasionMobs() {
