@@ -88,6 +88,7 @@ public class PlayerListener implements Listener {
 
         if (!warden.getUniqueId().equals(nexo.getWarden().getUniqueId())) return;
 
-        // No eliminar el Nexo al morir su Warden
+        nexo.setVida(0);
+        manager.eliminarNexo(warden.getWorld());
     }
 }
