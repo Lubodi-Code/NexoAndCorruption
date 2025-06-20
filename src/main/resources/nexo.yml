@@ -186,3 +186,5 @@ corruption:
   habilitado: true
   intervalo_expansion: 200    # ticks entre ciclos de expansión
   bloques_por_ciclo: 5        # bloques a corromper por ciclo
+  area_min: 10                # tamaño mínimo del área inicial de corrupción
+  area_max: 20                # tamaño máximo del área inicial de corrupción
