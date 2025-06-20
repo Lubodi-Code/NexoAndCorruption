@@ -1,10 +1,11 @@
-main: nexo.beta.NexoAndCorruption
-version: 1.0.0-SNAPSHOT
-name: NexoAndCorruption
-author: Lubodi
-api-version: 1.20
+main: "nexo.beta.NexoAndCorruption"
+version: "1.0.0-SNAPSHOT"
+name: "NexoAndCorruption"
+author: "Lubodi"
+api-version: "1.20"
+
 commands:
   nexo:
-    description: Gestiona el Nexo protector
-    usage: /<command> <crear|destruir|estado|activar|desactivar|reiniciar|recargar>
-    permission: nexo.admin
+    description: "Gestiona el Nexo protector"
+    usage: "/<command> <crear|destruir|estado|activar|desactivar|recargar|expandir>"
+    permission: "nexo.admin"
