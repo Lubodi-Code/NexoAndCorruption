@@ -30,7 +30,7 @@ public class CommandNexoManager implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (args.length == 0) {
-            sender.sendMessage("§eUso: /" + label + " <crear|destruir|estado|activar|desactivar|reiniciar|recargar|expandir|invasion>");
+            sender.sendMessage("§eUso: /" + label + " <crear|destruir|estado|activar|desactivar|recargar|expandir|invasion>");
             return true;
         }
 
@@ -94,14 +94,6 @@ public class CommandNexoManager implements CommandExecutor {
                 nexoDes.desactivar();
                 sender.sendMessage("§cNexo desactivado.");
                 break;
-            case "reiniciar":
-                if (!config.isComandoReiniciarHabilitado()) {
-                    sender.sendMessage("§cComando deshabilitado.");
-                    return true;
-                }
-                plugin.getPluginManager().getInvasionManager().forzarInvasion();
-                sender.sendMessage("§aEl Nexo se está reiniciando...");
-                break;
             case "expandir":
                 if (args.length < 2) {
                     sender.sendMessage("§cUso: /" + label + " expandir <cantidad>");
@@ -135,7 +127,7 @@ public class CommandNexoManager implements CommandExecutor {
                 sender.sendMessage("§aPlugin recargado.");
                 break;
             default:
-                sender.sendMessage("§eUso: /" + label + " <crear|destruir|estado|activar|desactivar|reiniciar|recargar|expandir|invasion>");
+                sender.sendMessage("§eUso: /" + label + " <crear|destruir|estado|activar|desactivar|recargar|expandir|invasion>");
                 break;
         }
         return true;
