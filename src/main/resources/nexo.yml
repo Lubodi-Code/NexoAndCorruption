@@ -18,42 +18,30 @@ nexo:
     y: 100
     z: 0
 
-  # Eventos especiales durante el reinicio
-  eventos_especiales:
-    habilitado: true
-    probabilidad: 0.25  # 25% de probabilidad
-
-    # Mensajes de evento especial
-    mensaje_previo: "‼️ El Nexo siente una gran perturbación en la energía..."
-    mensaje_inicio: "El Nexo se está reiniciando..."
-    mensaje_fin: "✅ El Nexo ha recuperado su estabilidad. La invasión ha terminado."
-
-    # Duración del evento especial (en segundos)
-    duracion: 1200  # 20 minutos
-
-    # Efectos durante el evento
-    efectos:
-      - tipo: "WEAKNESS"
-        duracion: 600  # 10 minutos
-        amplificador: 1
-        area_radio: 100
-
-      - tipo: "SLOWNESS"
-        duracion: 300  # 5 minutos
-        amplificador: 0
-        area_radio: 75
-
-  # Configuración de invasiones aleatorias
+  # Configuración de invasiones
   invasion:
     probabilidad: 1.0          # Probabilidad de que ocurra la invasión
     advertencia: 30            # Segundos de aviso antes de iniciar
     duracion: 30               # Duración de la invasión en segundos
     radio_spawn: 100           # Radio máximo para spawnear criaturas
+    radio_spawn_min: 80        # Distancia mínima para spawnear criaturas
+    check_interval: 60         # Intervalo para evaluar una invasión (en segundos)
+    mensaje_previo: "‼️ El Nexo siente una gran perturbación en la energía..."
+    mensaje_inicio: "El Nexo se está reiniciando..."
+    mensaje_fin: "✅ El Nexo ha recuperado su estabilidad. La invasión ha terminado."
     mobs:
-      ZOMBIE: 0.4
-      SKELETON: 0.3
-      CREEPER: 0.2
-      WARDEN: 0.1
+      ZOMBIE: 0.2
+      SKELETON: 0.15
+      WITHER_SKELETON: 0.05
+      HUSK: 0.1
+      STRAY: 0.1
+      DROWNED: 0.1
+      SPIDER: 0.08
+      CAVE_SPIDER: 0.05
+      CREEPER: 0.15
+      WITHER: 0.01
+      WARDEN: 0.01
+
 
   # Sistema de protecciones
   protecciones:
