@@ -6,10 +6,13 @@ nexo:
   # Configuración básica del Nexo
   vida_maxima: 1000
   energia_maxima: 1000
-  energia_consumo_por_minuto: 10
+  # Energía consumida cada intervalo
+  energia_consumo_base: 17
+  # Intervalo de consumo en minutos
+  energia_consumo_intervalo: 10
 
   # Radio de protección (en bloques)
-  radio_proteccion: 50
+  radio_proteccion: 500
 
   # Configuración de ubicación
   ubicacion:

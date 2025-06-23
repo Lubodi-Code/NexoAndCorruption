@@ -139,13 +139,15 @@ public class NexoManager {
             }.runTaskTimer(plugin, 20L, 20L); // Cada segundo (20 ticks)
         }
 
-        // Task de consumo de energía (cada minuto)
+        // Task de consumo de energía (intervalo configurable)
         taskConsumoEnergia = new BukkitRunnable() {
             @Override
             public void run() {
                 consumirEnergiaTodosLosNexos();
             }
-        }.runTaskTimer(plugin, 1200L, 1200L); // Cada minuto (1200 ticks)
+        }.runTaskTimer(plugin,
+                       configManager.getIntervaloConsumoEnergia() * 1200L,
+                       configManager.getIntervaloConsumoEnergia() * 1200L);
 
         // Task de guardado automático
         if (configManager.getIntervaloGuardadoAuto() > 0) {
@@ -295,7 +297,7 @@ public class NexoManager {
      * Consume energía de todos los Nexos activos
      */
     private void consumirEnergiaTodosLosNexos() {
-        int consumoBase = configManager.getConsumoEnergiaPorMinuto();
+        int consumoBase = configManager.getConsumoEnergiaBase();
 
         for (Nexo nexo : nexosPorMundo.values()) {
             if (nexo.estaActivo()) {

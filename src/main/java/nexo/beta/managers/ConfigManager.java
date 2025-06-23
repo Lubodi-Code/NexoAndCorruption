@@ -70,12 +70,16 @@ public class ConfigManager {
         return nexoConfig.getInt("nexo.energia_maxima", 1000);
     }
 
-    public int getConsumoEnergiaPorMinuto() {
-        return nexoConfig.getInt("nexo.energia_consumo_por_minuto", 10);
+    public int getConsumoEnergiaBase() {
+        return nexoConfig.getInt("nexo.energia_consumo_base", 17);
+    }
+
+    public int getIntervaloConsumoEnergia() {
+        return nexoConfig.getInt("nexo.energia_consumo_intervalo", 10);
     }
 
     public int getRadioProteccion() {
-        return nexoConfig.getInt("nexo.radio_proteccion", 50);
+        return nexoConfig.getInt("nexo.radio_proteccion", 500);
     }
 
     // ==========================================

@@ -753,6 +753,11 @@ public class Nexo {
         actualizarBarrera();
     }
 
+    public void reducirRadio(int cantidad) {
+        this.radioActual = Math.max(radioBase, radioActual - cantidad);
+        actualizarBarrera();
+    }
+
     public void resetRadio() {
         this.radioActual = radioBase;
         actualizarBarrera();
