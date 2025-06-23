@@ -1,9 +1,9 @@
 package nexo.beta.managers;
 
-import java.util.Random;
-import java.util.List;
-import java.util.Set;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -42,7 +42,6 @@ public class CorruptionManager {
         TRANSPARENT_MATERIALS.add(Material.WATER);
         TRANSPARENT_MATERIALS.add(Material.LAVA);
         TRANSPARENT_MATERIALS.add(Material.TALL_GRASS);
-        TRANSPARENT_MATERIALS.add(Material.GRASS);
         TRANSPARENT_MATERIALS.add(Material.FERN);
         TRANSPARENT_MATERIALS.add(Material.LARGE_FERN);
         TRANSPARENT_MATERIALS.add(Material.DEAD_BUSH);

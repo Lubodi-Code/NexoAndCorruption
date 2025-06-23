@@ -8,4 +8,3 @@ commands:
   nexo:
     description: "Gestiona el Nexo protector"
     usage: "/<command> <crear|destruir|estado|activar|desactivar|recargar|expandir>"
-    permission: "nexo.admin"
