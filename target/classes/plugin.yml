@@ -2,7 +2,7 @@ main: "nexo.beta.NexoAndCorruption"
 version: "1.0.0-SNAPSHOT"
 name: "NexoAndCorruption"
 author: "Lubodi"
-api-version: "1.20"
+api-version: "1.21"
 
 commands:
   nexo:

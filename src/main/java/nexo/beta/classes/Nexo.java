@@ -209,7 +209,7 @@ public class Nexo {
         warden.setAI(false);
         warden.setSilent(true);
         warden.addScoreboardTag(WARDEN_TAG);
-        warden.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(configManager.getVidaMaxima());
+        warden.getAttribute(Attribute.MAX_HEALTH).setBaseValue(configManager.getVidaMaxima());
         warden.setHealth(Math.min(vida, configManager.getVidaMaxima()));
 
         texturaStand = (ArmorStand) ubicacion.getWorld().spawnEntity(ubicacion, EntityType.ARMOR_STAND);
@@ -221,7 +221,16 @@ public class Nexo {
         if (meta != null) {
             NamespacedKey key = new NamespacedKey(Bukkit.getPluginManager().getPlugin("NexoAndCorruption"), "texturaNexo");
             meta.getPersistentDataContainer().set(key, PersistentDataType.INTEGER, 1);
-            meta.setCustomModelData(11223377); // Asignar modelo personalizado
+            
+              NamespacedKey modelKey = NamespacedKey.fromString("demo:3d_nexo");
+
+                 // 3. Asigna el item_model al meta
+                  meta.setItemModel(modelKey);
+    
+                  // 4. Guarda el meta en el ItemStack
+                  flint.setItemMeta(meta);
+
+             
             flint.setItemMeta(meta);
         }
         texturaStand.getEquipment().setHelmet(flint);
@@ -290,13 +299,13 @@ public class Nexo {
             for (int i = 0; i < 36; i++) {
                 double angle = Math.toRadians(i * 10 + (stepRunas * 5));
                 Location p = ubicacion.clone().add(Math.cos(angle) * 1.2, 0.05, Math.sin(angle) * 1.2);
-                ubicacion.getWorld().spawnParticle(Particle.ENCHANTMENT_TABLE, p, 1, 0, 0, 0, 0);
+                ubicacion.getWorld().spawnParticle(Particle.ENCHANT, p, 1, 0, 0, 0, 0);
             }
             stepRunas++;
 
             // Partículas adicionales si está en estado crítico
             if (enEstadoCritico) {
-                ubicacion.getWorld().spawnParticle(Particle.SMOKE_NORMAL,
+                ubicacion.getWorld().spawnParticle(Particle.SMOKE,
                                                  ubicacion.clone().add(0, 1, 0),
                                                  5, 0.5, 0.5, 0.5, 0.01);
             }
@@ -424,7 +433,7 @@ public class Nexo {
         if (ubicacion.getWorld() == null) return;
 
         ubicacion.getWorld().spawnParticle(Particle.FLASH, ubicacion, 50, 1, 1, 1, 0);
-        ubicacion.getWorld().spawnParticle(Particle.EXPLOSION_HUGE, ubicacion, 1);
+        ubicacion.getWorld().spawnParticle(Particle.EXPLOSION, ubicacion, 1);
         ubicacion.getWorld().playSound(ubicacion, Sound.ENTITY_GENERIC_EXPLODE, 2.0f, 1.0f);
     }
 
@@ -628,7 +637,7 @@ public class Nexo {
         this.vida = Math.max(0, Math.min(vida, configManager.getVidaMaxima()));
 
         if (warden != null && !warden.isDead()) {
-            double max = warden.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue();
+            double max = warden.getAttribute(Attribute.MAX_HEALTH).getBaseValue();
             warden.setHealth(Math.max(0.0, Math.min(this.vida, max)));
         }
 

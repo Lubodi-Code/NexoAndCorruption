@@ -1,14 +1,14 @@
 package nexo.beta.Events;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
-import java.util.HashMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
+import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Monster;
@@ -136,7 +136,7 @@ public class InvasionManager {
                     if (tiempo <= 5) {
                         for (org.bukkit.entity.Player p : Bukkit.getOnlinePlayers()) {
                             p.playSound(p.getLocation(), org.bukkit.Sound.BLOCK_NOTE_BLOCK_PLING, 1.0f, 1.5f);
-                            p.spawnParticle(org.bukkit.Particle.SMOKE_NORMAL, p.getLocation().add(0,1,0), 10, 0.5, 0.5, 0.5, 0.01);
+                            p.spawnParticle(org.bukkit.Particle.SMOKE, p.getLocation().add(0,1,0), 10, 0.5, 0.5, 0.5, 0.01);
                         }
                     }
                     tiempo--;

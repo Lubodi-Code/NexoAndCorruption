@@ -10,6 +10,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 
+
 public class BarrierUtils {
 
     private static final Map<String, BukkitTask> activeBarriers = new ConcurrentHashMap<>();
@@ -66,7 +67,7 @@ public class BarrierUtils {
 
                     Location particleLocation = center.clone().add(x, 0.1, z);
 
-                    if (particle == Particle.REDSTONE && color != null) {
+                    if (particle == Particle.DUST && color != null) {
                         Particle.DustOptions dustOptions = new Particle.DustOptions(color, 4.0f);
                         center.getWorld().spawnParticle(particle, particleLocation,
                                 3, 0.2, 0.2, 0.2, 0.2, dustOptions);
@@ -166,7 +167,7 @@ public class BarrierUtils {
             Vector point = new Vector(x * radius, y * radius, z * radius);
             Location particleLocation = center.clone().add(point);
 
-            if (data.getParticle() == Particle.REDSTONE && data.getColor() != null) {
+            if (data.getParticle() == Particle.DUST && data.getColor() != null) {
                 Particle.DustOptions dustOptions = new Particle.DustOptions(
                         data.getColor(), 1.0f
                 );
@@ -208,7 +209,7 @@ public class BarrierUtils {
     public static void createNexoBarrier(String nexoId, Location center, double radius,
                                          boolean isActive, boolean isCritical) {
         Color color;
-        Particle particle = Particle.REDSTONE;
+        Particle particle = Particle.DUST;
         int density;
 
         if (!isActive) {

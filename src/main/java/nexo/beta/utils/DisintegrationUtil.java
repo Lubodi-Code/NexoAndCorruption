@@ -24,7 +24,7 @@ public class DisintegrationUtil {
             public void run() {
                 // Si el mob ya está muerto o pasó el número de pasos, remuévelo con explosión final
                 if (step > 12 || entity.isDead()) {
-                    origin.getWorld().spawnParticle(Particle.EXPLOSION_HUGE, origin, 1);
+                    origin.getWorld().spawnParticle(Particle.EXPLOSION, origin, 1);
                     origin.getWorld().playSound(origin, Sound.ENTITY_GENERIC_EXPLODE, 1f, 0.6f);
                     entity.remove();
                     cancel();
@@ -41,8 +41,8 @@ public class DisintegrationUtil {
                     double dz = Math.sin(angle) * radius;
                     Location p = origin.clone().add(dx, 0.5, dz);
 
-                    origin.getWorld().spawnParticle(Particle.CRIT_MAGIC, p, 1, 0, 0, 0, 0);
-                    origin.getWorld().spawnParticle(Particle.SMOKE_NORMAL, p, 1, 0, 0, 0, 0);
+                    origin.getWorld().spawnParticle(Particle.CRIMSON_SPORE, p, 1, 0, 0, 0, 0);
+                    origin.getWorld().spawnParticle(Particle.SMOKE, p, 1, 0, 0, 0, 0);
                 }
 
                 // Sonido sutil de chispea a mitad de animación
