@@ -76,9 +76,11 @@ public class InvasionManager {
     }
 
     private void verificarCondiciones() {
-        // Si no existen Nexos activos, detener cualquier invasión y no iniciar
+        // Si no existen Nexos activos, detener cualquier cuenta regresiva
+        // pero permitir que una invasión ya activa continúe.
         if (nexoManager.getNexosActivos() == 0) {
-            if (invasionEnCurso) {
+            // Solo cancelar si la invasión aún no ha comenzado
+            if (invasionEnCurso && !invasionActiva) {
                 detenerInvasion();
             }
             return;
