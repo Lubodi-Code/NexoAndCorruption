@@ -221,7 +221,7 @@ public class Nexo {
         if (meta != null) {
             NamespacedKey key = new NamespacedKey(Bukkit.getPluginManager().getPlugin("NexoAndCorruption"), "texturaNexo");
             meta.getPersistentDataContainer().set(key, PersistentDataType.INTEGER, 1);
-            meta.setCustomModelData(1234567890); // Asignar modelo personalizado
+            meta.setCustomModelData(11223377); // Asignar modelo personalizado
             flint.setItemMeta(meta);
         }
         texturaStand.getEquipment().setHelmet(flint);
