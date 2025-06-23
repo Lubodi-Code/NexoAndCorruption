@@ -714,8 +714,13 @@ public class Nexo {
         }
 
         if (!activo && this.energia >= max / 2) {
-            activar();
-            nexo.beta.managers.PluginManager.getInstance().getInvasionManager().detenerInvasion();
+            boolean invasion = nexo.beta.managers.PluginManager.getInstance()
+                    .getInvasionManager().isInvasionEnCurso();
+            if (!invasion) {
+                activar();
+                nexo.beta.managers.PluginManager.getInstance()
+                        .getInvasionManager().detenerInvasion();
+            }
         }
     }
 
