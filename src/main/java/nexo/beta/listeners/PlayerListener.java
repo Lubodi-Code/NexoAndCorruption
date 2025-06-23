@@ -52,8 +52,8 @@ public class PlayerListener implements Listener {
             case REDSTONE -> {
                 player.getInventory().getItemInMainHand().setAmount(
                     player.getInventory().getItemInMainHand().getAmount() - 1);
-                nexo.resetRadio();
-                player.sendMessage("§cRadio del Nexo restablecido.");
+                nexo.reducirRadio(10);
+                player.sendMessage("§cRadio del Nexo reducido.");
             }
             default -> {
             }

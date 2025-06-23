@@ -93,7 +93,8 @@ public class NexoAndCorruption extends JavaPlugin {
         getLogger().info("§e[DEBUG] ==========================================");
         getLogger().info("§e[DEBUG] Vida máxima: " + config.getVidaMaxima());
         getLogger().info("§e[DEBUG] Energía máxima: " + config.getEnergiaMaxima());
-        getLogger().info("§e[DEBUG] Consumo de energía/min: " + config.getConsumoEnergiaPorMinuto());
+        getLogger().info("§e[DEBUG] Consumo de energía/intervalo: " + config.getConsumoEnergiaBase());
+        getLogger().info("§e[DEBUG] Intervalo de consumo (min): " + config.getIntervaloConsumoEnergia());
         getLogger().info("§e[DEBUG] Radio de protección: " + config.getRadioProteccion());
         getLogger().info("§e[DEBUG] Ubicación del Nexo: " + config.getUbicacionNexo().toString());
         getLogger().info("§e[DEBUG] Nexos activos: " + nexo.getNexosActivos() + "/" + nexo.getTotalNexos());
