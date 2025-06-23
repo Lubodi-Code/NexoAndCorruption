@@ -205,36 +205,67 @@ public class Nexo {
     private void spawnRepresentation() {
         if (ubicacion.getWorld() == null) return;
 
+        // Buscar si ya existe un Warden representando al Nexo
+        for (Warden existing : ubicacion.getWorld().getEntitiesByClass(Warden.class)) {
+            if (existing.getScoreboardTags().contains(WARDEN_TAG)) {
+                warden = existing;
+                warden.setAI(false);
+                warden.setSilent(true);
+                warden.setInvisible(configManager.isWardenInvisible());
+                warden.getAttribute(Attribute.MAX_HEALTH).setBaseValue(configManager.getVidaMaxima());
+                warden.setHealth(Math.min(vida, configManager.getVidaMaxima()));
+
+                // Intentar reutilizar el ArmorStand ya existente
+                for (org.bukkit.entity.Entity passenger : warden.getPassengers()) {
+                    if (passenger instanceof ArmorStand) {
+                        texturaStand = (ArmorStand) passenger;
+                        break;
+                    }
+                }
+
+                if (texturaStand == null) {
+                    texturaStand = (ArmorStand) ubicacion.getWorld().spawnEntity(ubicacion, EntityType.ARMOR_STAND);
+                    configurarArmorStand(texturaStand);
+                    warden.addPassenger(texturaStand);
+                }
+                return;
+            }
+        }
+
+        // Si no existe, crear un nuevo Warden
         warden = (Warden) ubicacion.getWorld().spawnEntity(ubicacion, EntityType.WARDEN);
         warden.setAI(false);
         warden.setSilent(true);
         warden.addScoreboardTag(WARDEN_TAG);
         warden.getAttribute(Attribute.MAX_HEALTH).setBaseValue(configManager.getVidaMaxima());
         warden.setHealth(Math.min(vida, configManager.getVidaMaxima()));
+        warden.setInvisible(configManager.isWardenInvisible());
 
         texturaStand = (ArmorStand) ubicacion.getWorld().spawnEntity(ubicacion, EntityType.ARMOR_STAND);
-        texturaStand.setInvisible(true);
-        texturaStand.setMarker(true);
-        texturaStand.setGravity(false);
+        configurarArmorStand(texturaStand);
+        warden.addPassenger(texturaStand);
+    }
+
+    /**
+     * Configura las propiedades del ArmorStand utilizado como textura del Nexo
+     */
+    private void configurarArmorStand(ArmorStand stand) {
+        stand.setInvisible(true);
+        stand.setMarker(true);
+        stand.setGravity(false);
+
         ItemStack flint = new ItemStack(Material.FLINT);
         ItemMeta meta = flint.getItemMeta();
         if (meta != null) {
             NamespacedKey key = new NamespacedKey(Bukkit.getPluginManager().getPlugin("NexoAndCorruption"), "texturaNexo");
             meta.getPersistentDataContainer().set(key, PersistentDataType.INTEGER, 1);
-            
-              NamespacedKey modelKey = NamespacedKey.fromString("demo:3d_nexo");
 
-                 // 3. Asigna el item_model al meta
-                  meta.setItemModel(modelKey);
-    
-                  // 4. Guarda el meta en el ItemStack
-                  flint.setItemMeta(meta);
+            NamespacedKey modelKey = NamespacedKey.fromString("demo:3d_nexo");
+            meta.setItemModel(modelKey);
 
-             
             flint.setItemMeta(meta);
         }
-        texturaStand.getEquipment().setHelmet(flint);
-        warden.addPassenger(texturaStand);
+        stand.getEquipment().setHelmet(flint);
     }
 
     /**
@@ -294,6 +325,18 @@ public class Nexo {
 
                 Location particleLocation = new Location(ubicacion.getWorld(), x, y, z);
                 ubicacion.getWorld().spawnParticle(particula, particleLocation, 1, 0, 0, 0, 0);
+            }
+
+            if (configManager.isHaloHabilitado()) {
+                for (int i = 0; i < 24; i++) {
+                    double angle = Math.toRadians(i * 15 + (stepRunas * 5));
+                    Location halo = ubicacion.clone().add(Math.cos(angle) * 1.5, 1.2, Math.sin(angle) * 1.5);
+                    ubicacion.getWorld().spawnParticle(Particle.END_ROD, halo, 0, 0, 0, 0, 0);
+                }
+            }
+
+            if (configManager.isSonidoBeaconHabilitado() && configManager.isSonidosHabilitados()) {
+                ubicacion.getWorld().playSound(ubicacion, Sound.BLOCK_BEACON_AMBIENT, 0.8f, 1.0f);
             }
 
             for (int i = 0; i < 36; i++) {
