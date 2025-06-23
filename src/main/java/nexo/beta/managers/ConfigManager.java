@@ -261,6 +261,22 @@ public class ConfigManager {
         return nexoConfig.getInt("nexo.efectos.particulas.intervalo", 5);
     }
 
+    public boolean isHaloHabilitado() {
+        return nexoConfig.getBoolean("nexo.efectos.halo.habilitado", true);
+    }
+
+    public boolean isSonidoBeaconHabilitado() {
+        return nexoConfig.getBoolean("nexo.efectos.sonido_beacon.habilitado", true);
+    }
+
+    // ==========================================
+    // MÉTODOS PARA REPRESENTACIÓN DEL NEXO
+    // ==========================================
+
+    public boolean isWardenInvisible() {
+        return nexoConfig.getBoolean("nexo.representacion.warden_invisible", false);
+    }
+
     public boolean isSonidosHabilitados() {
         return nexoConfig.getBoolean("nexo.efectos.sonidos.habilitado", true);
     }

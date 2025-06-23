@@ -18,6 +18,11 @@ nexo:
     y: 100
     z: 0
 
+  # Opciones de representación
+  representacion:
+    # Permite que el Warden del Nexo sea invisible
+    warden_invisible: false
+
   # Configuración de invasiones
   invasion:
     probabilidad: 1.0          # Probabilidad de que ocurra la invasión
@@ -98,6 +103,12 @@ nexo:
       vida_baja: "ENTITY_VILLAGER_HURT"
       reinicio: "BLOCK_END_PORTAL_SPAWN"
       muerte: "ENTITY_WITHER_DEATH"
+
+    halo:
+      habilitado: true
+
+    sonido_beacon:
+      habilitado: true
 
   # Configuración de estados críticos
   estados_criticos:
