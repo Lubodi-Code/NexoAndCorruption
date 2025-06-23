@@ -76,6 +76,14 @@ public class InvasionManager {
     }
 
     private void verificarCondiciones() {
+        // Si no existen Nexos activos, detener cualquier invasión y no iniciar
+        if (nexoManager.getNexosActivos() == 0) {
+            if (invasionEnCurso) {
+                detenerInvasion();
+            }
+            return;
+        }
+
         if (!invasionEnCurso) {
             double prob = config.getInvasionProbabilidad();
             if (Math.random() <= prob) {
@@ -182,6 +190,11 @@ public class InvasionManager {
     }
 
     private void generarEntidades() {
+        if (nexoManager.getNexosActivos() == 0) {
+            detenerInvasion();
+            return;
+        }
+
         Map<String, Double> mobs = config.getInvasionMobs();
         if (mobs.isEmpty()) return;
         Random rnd = new Random();
