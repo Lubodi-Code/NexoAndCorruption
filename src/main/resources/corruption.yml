@@ -5,7 +5,7 @@ corruption:
   habilitado: true
   
   # Configuración básica
-  intervalo_expansion: 8        # ticks entre ciclos de crecimiento
+  intervalo_expansion: 500        # ticks entre ciclos de crecimiento
   bloques_por_ciclo: 5           # operaciones por ciclo
   area_min: 50                   # tamaño mínimo de zona
   area_max: 200                # tamaño máximo de zona
