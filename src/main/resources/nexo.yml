@@ -5,11 +5,16 @@
 nexo:
   # Configuración básica del Nexo
   vida_maxima: 1000
-  energia_maxima: 1000
-  energia_consumo_por_minuto: 10
+  energia_maxima: 1200
+  energia_consumo_por_minuto: 2
 
   # Radio de protección (en bloques)
-  radio_proteccion: 50
+  radio_proteccion: 500
+
+  # Apariencia de la representación
+  representacion:
+    warden_invisible: true
+    armorstand_invisible: false
 
   # Configuración de ubicación
   ubicacion:

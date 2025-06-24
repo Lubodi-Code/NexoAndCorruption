@@ -78,6 +78,14 @@ public class ConfigManager {
         return nexoConfig.getInt("nexo.radio_proteccion", 50);
     }
 
+    public boolean isWardenInvisible() {
+        return nexoConfig.getBoolean("nexo.representacion.warden_invisible", true);
+    }
+
+    public boolean isArmorStandInvisible() {
+        return nexoConfig.getBoolean("nexo.representacion.armorstand_invisible", false);
+    }
+
     // ==========================================
     // MÉTODOS PARA UBICACIÓN DEL NEXO
     // ==========================================

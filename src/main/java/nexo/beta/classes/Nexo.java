@@ -211,9 +211,10 @@ public class Nexo {
         warden.addScoreboardTag(WARDEN_TAG);
         warden.getAttribute(Attribute.MAX_HEALTH).setBaseValue(configManager.getVidaMaxima());
         warden.setHealth(Math.min(vida, configManager.getVidaMaxima()));
+        warden.setInvisible(configManager.isWardenInvisible());
 
         texturaStand = (ArmorStand) ubicacion.getWorld().spawnEntity(ubicacion, EntityType.ARMOR_STAND);
-        texturaStand.setInvisible(true);
+        texturaStand.setInvisible(configManager.isArmorStandInvisible());
         texturaStand.setMarker(true);
         texturaStand.setGravity(false);
         ItemStack flint = new ItemStack(Material.FLINT);

@@ -77,6 +77,9 @@ public class InvasionManager {
 
     private void verificarCondiciones() {
         if (!invasionEnCurso) {
+            if (nexoManager.getNexosActivos() <= 0) {
+                return;
+            }
             double prob = config.getInvasionProbabilidad();
             if (Math.random() <= prob) {
                 iniciarCuentaRegresiva();
