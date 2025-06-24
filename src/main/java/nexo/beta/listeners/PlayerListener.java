@@ -66,15 +66,27 @@ public class PlayerListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerDamageNexo(EntityDamageByEntityEvent event) {
-        if (!(event.getEntity() instanceof Warden warden)) return;
+        org.bukkit.entity.Entity entity = event.getEntity();
 
         NexoManager manager = NexoAndCorruption.getNexoManagerStatic();
         if (manager == null) return;
 
-        Nexo nexo = manager.getNexoEnMundo(warden.getWorld());
+        Nexo nexo = manager.getNexoEnMundo(entity.getWorld());
         if (nexo == null || nexo.getWarden() == null) return;
 
-        if (!warden.getUniqueId().equals(nexo.getWarden().getUniqueId())) return;
+        boolean objetivo = false;
+        if (entity instanceof Warden warden) {
+            if (warden.getUniqueId().equals(nexo.getWarden().getUniqueId())) {
+                objetivo = true;
+            }
+        } else if (entity instanceof org.bukkit.entity.ArmorStand stand) {
+            if (nexo.getTexturaStand() != null
+                    && stand.getUniqueId().equals(nexo.getTexturaStand().getUniqueId())) {
+                objetivo = true;
+            }
+        }
+
+        if (!objetivo) return;
 
         Player damager = null;
         if (event.getDamager() instanceof Player p) {
