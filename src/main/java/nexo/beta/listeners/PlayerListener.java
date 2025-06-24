@@ -4,7 +4,11 @@ import org.bukkit.Material;
 import org.bukkit.event.Listener;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.EventPriority;
+import org.bukkit.entity.Projectile;
+import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.entity.Warden;
@@ -60,7 +64,35 @@ public class PlayerListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onPlayerDamageNexo(EntityDamageByEntityEvent event) {
+        if (!(event.getEntity() instanceof Warden warden)) return;
+
+        NexoManager manager = NexoAndCorruption.getNexoManagerStatic();
+        if (manager == null) return;
+
+        Nexo nexo = manager.getNexoEnMundo(warden.getWorld());
+        if (nexo == null || nexo.getWarden() == null) return;
+
+        if (!warden.getUniqueId().equals(nexo.getWarden().getUniqueId())) return;
+
+        Player damager = null;
+        if (event.getDamager() instanceof Player p) {
+            damager = p;
+        } else if (event.getDamager() instanceof Projectile proj) {
+            ProjectileSource src = proj.getShooter();
+            if (src instanceof Player p) {
+                damager = p;
+            }
+        }
+
+        if (damager != null) {
+            event.setCancelled(true);
+            damager.sendMessage("§cNo puedes dañar el Nexo.");
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
     public void onEntityDamage(EntityDamageEvent event) {
         if (!(event.getEntity() instanceof Warden warden)) return;
 
