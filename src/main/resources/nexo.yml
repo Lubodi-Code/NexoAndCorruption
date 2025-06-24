@@ -25,9 +25,9 @@ nexo:
 
   # Configuración de invasiones
   invasion:
-    probabilidad: 1.0          # Probabilidad de que ocurra la invasión
-    advertencia: 30            # Segundos de aviso antes de iniciar
-    duracion: 30               # Duración de la invasión en segundos
+    probabilidad: 0.1          # Probabilidad de que ocurra la invasión
+    advertencia: 18000            # Segundos de aviso antes de iniciar
+    duracion: 1800               # Duración de la invasión en segundos
     radio_spawn: 100           # Radio máximo para spawnear criaturas
     radio_spawn_min: 80        # Distancia mínima para spawnear criaturas
     check_interval: 60         # Intervalo para evaluar una invasión (en segundos)
