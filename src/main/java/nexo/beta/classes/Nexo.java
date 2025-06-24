@@ -694,6 +694,13 @@ public class Nexo {
         return warden;
     }
 
+    /**
+     * Obtiene el ArmorStand que representa visualmente al Nexo.
+     */
+    public ArmorStand getTexturaStand() {
+        return texturaStand;
+    }
+
     public ConfigManager getConfigManager() {
         return configManager;
     }

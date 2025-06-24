@@ -99,7 +99,22 @@ public class InvasionManager {
                     cancel();
                     return;
                 }
-                if (tiempo % 10 == 0 || tiempo <= 5) {
+
+                if (tiempo > 3600) {
+                    if (tiempo % 3600 == 0) {
+                        int horas = tiempo / 3600;
+                        Bukkit.broadcastMessage(Utils.colorize(config.getPrefijo() + "§cInvasión en " + horas + "h"));
+                    }
+                } else if (tiempo > 60) {
+                    if (tiempo % 60 == 0) {
+                        int minutos = tiempo / 60;
+                        Bukkit.broadcastMessage(Utils.colorize(config.getPrefijo() + "§cInvasión en " + minutos + "m"));
+                    }
+                } else if (tiempo > 10) {
+                    if (tiempo % 10 == 0) {
+                        Bukkit.broadcastMessage(Utils.colorize(config.getPrefijo() + "§cInvasión en " + tiempo + "s"));
+                    }
+                } else {
                     Bukkit.broadcastMessage(Utils.colorize(config.getPrefijo() + "§cInvasión en " + tiempo + "s"));
                 }
                 tiempo--;
