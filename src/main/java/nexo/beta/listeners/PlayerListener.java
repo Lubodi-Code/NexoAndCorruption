@@ -1,18 +1,18 @@
 package nexo.beta.listeners;
 
 import org.bukkit.Material;
-import org.bukkit.event.Listener;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDeathEvent;
-import org.bukkit.event.EventPriority;
-import org.bukkit.entity.Projectile;
-import org.bukkit.projectiles.ProjectileSource;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerInteractAtEntityEvent;
-import org.bukkit.entity.Warden;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
+import org.bukkit.entity.Warden;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.player.PlayerInteractAtEntityEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.projectiles.ProjectileSource;
 
 import nexo.beta.NexoAndCorruption;
 import nexo.beta.classes.Nexo;
@@ -87,8 +87,12 @@ public class PlayerListener implements Listener {
         }
 
         if (damager != null) {
-            event.setCancelled(true);
+            
+            
             damager.sendMessage("§cNo puedes dañar el Nexo.");
+            damager.damage(0); // Prevents damage to the player
+            event.setCancelled(true);
+            
         }
     }
 
